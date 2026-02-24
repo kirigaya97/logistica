@@ -46,7 +46,7 @@ export default function VolumetricCalc() {
                 <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
                     <Box className="w-4 h-4" /> Dimensiones de la caja
                 </h3>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                         <label className="block text-xs text-gray-500 mb-1">Largo (cm)</label>
                         <input

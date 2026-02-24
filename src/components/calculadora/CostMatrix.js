@@ -80,7 +80,7 @@ export default function CostMatrix({ calculation, onSave, readOnly = false }) {
                         {categoryItems.map(item => {
                             const calculated = result.items.find(i => i.id === item.id)
                             return (
-                                <div key={item.id} className={`flex items-center gap-3 py-2 px-3 rounded-lg ${item.isActive ? 'bg-gray-50' : 'bg-gray-100 opacity-50'}`}>
+                                <div key={item.id} className={`flex flex-wrap items-center gap-2 sm:gap-3 py-2 px-2 sm:px-3 rounded-lg ${item.isActive ? 'bg-gray-50' : 'bg-gray-100 opacity-50'}`}>
                                     <button
                                         type="button"
                                         disabled={readOnly}
@@ -89,7 +89,7 @@ export default function CostMatrix({ calculation, onSave, readOnly = false }) {
                                     >
                                         {item.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                     </button>
-                                    <span className="flex-1 text-sm text-gray-700">{item.name}</span>
+                                    <span className="w-full sm:w-auto sm:flex-1 text-sm text-gray-700">{item.name}</span>
                                     <div className="flex items-center gap-2">
                                         {item.valueType === 'percentage' ? (
                                             <div className="flex items-center gap-1">

@@ -31,7 +31,7 @@ export default async function HistoricoPage() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <p className="text-sm text-gray-500 mb-1">Total Finalizados</p>
                     <p className="text-2xl font-bold text-gray-800">{totalFinalized}</p>

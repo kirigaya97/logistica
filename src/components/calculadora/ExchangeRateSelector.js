@@ -18,7 +18,7 @@ export default function ExchangeRateSelector({ value, onChange }) {
     return (
         <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">Tipo de Cambio</label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {rates.map((rate) => {
                     const label = RATE_LABELS[rate.casa] || rate.nombre
                     const isSelected = value?.type === rate.casa
@@ -28,8 +28,8 @@ export default function ExchangeRateSelector({ value, onChange }) {
                             type="button"
                             onClick={() => onChange({ type: rate.casa, buy: rate.compra, sell: rate.venta })}
                             className={`p-3 rounded-lg border text-left text-sm transition-all ${isSelected
-                                    ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
-                                    : 'border-gray-200 bg-white hover:border-gray-300'
+                                ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
+                                : 'border-gray-200 bg-white hover:border-gray-300'
                                 }`}
                         >
                             <p className="font-medium">{label}</p>

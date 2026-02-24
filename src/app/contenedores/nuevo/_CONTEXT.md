@@ -1,19 +1,24 @@
-# 📦 src/app/contenedores/nuevo
+# 📁 src/app/contenedores/nuevo
 
 ## Propósito
-Este directorio proporciona la interfaz de usuario para la creación de nuevos contenedores en el sistema. Contiene el formulario principal donde se ingresan los datos iniciales y de logística para registrar un contenedor.
+Este módulo proporciona la interfaz y la lógica necesaria para dar de alta un nuevo contenedor en el sistema, permitiendo definir su origen, tipo y cronograma estimado de viaje.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `page.js` | Componente de página de Next.js que renderiza el formulario de alta de contenedor, permitiendo definir su depósito de origen, tipo, fechas estimadas (ETD/ETA) y otros detalles. |
+| page.js | Componente de página que renderiza el formulario de creación de contenedor con validaciones básicas y navegación. |
 
 ## Relaciones
-- **Usa**: `@/lib/constants` (obtiene constantes de `WAREHOUSES` y `CONTAINER_TYPES`), `@/app/contenedores/actions` (consume la Server Action `createContainer`), `next/link`, `lucide-react`.
-- **Usado por**: El enrutador de Next.js (App Router) como la ruta `/contenedores/nuevo`.
+- **Usa**: 
+    - `@/lib/constants` (para obtener los depósitos y tipos de contenedores permitidos).
+    - `@/app/contenedores/actions` (ejecuta la Server Action `createContainer`).
+    - `lucide-react` (iconografía de interfaz).
+    - `next/link` (navegación hacia el listado de contenedores).
+- **Usado por**: Por determinar (generalmente vinculado desde el dashboard o el listado principal de contenedores).
 
 ## Detalles clave
-- Implementa Next.js Server Actions (vía `action={createContainer}`) para procesar el envío del formulario directamente en el servidor sin necesidad de llamadas fetch a una API.
-- Los selectores del formulario (origen y tipo de contenedor) se alimentan de constantes globales, lo que asegura que las opciones estén estandarizadas en toda la aplicación.
-- Requiere obligatoriamente que se seleccione el depósito de origen y el tipo de contenedor antes de permitir el envío del formulario.
-- Presenta un diseño limpio usando Tailwind CSS e incluye controles para cancelar y volver fácilmente al listado de contenedores.
+- **Lógica de Servidor**: El formulario utiliza la acción `createContainer` que valida los datos mediante un esquema de Zod antes de persistirlos en Supabase.
+- **Identificación Automática**: El sistema genera automáticamente un código único para el contenedor siguiendo el patrón `{ORIGEN}-{AÑO}-{SECUENCIA}` (ej: HK-2024-001).
+- **Integración de Constantes**: Los selectores de "Depósito de Origen" y "Tipo de Contenedor" se alimentan directamente de las definiciones globales en `constants.js`, asegurando consistencia en los datos.
+- **Flujo de Usuario**: Tras una creación exitosa, el sistema realiza una revalidación de caché de la ruta `/contenedores` y redirige al usuario al listado principal.
+- **Fechas Logísticas**: Permite la carga de ETD (salida estimada) y ETA (arribo estimado) para el seguimiento temprano del transporte.

@@ -43,7 +43,7 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 | `src/components/calculadora/` | 5 | [→ _CONTEXT.md](src/components/calculadora/_CONTEXT.md) |
 | `src/components/clientes/` | 2 | [→ _CONTEXT.md](src/components/clientes/_CONTEXT.md) |
 | `src/components/contenedores/` | 5 | [→ _CONTEXT.md](src/components/contenedores/_CONTEXT.md) |
-| `src/components/layout/` | 3 | [→ _CONTEXT.md](src/components/layout/_CONTEXT.md) |
+| `src/components/layout/` | 5 | [→ _CONTEXT.md](src/components/layout/_CONTEXT.md) |
 | `src/components/packing-list/` | 4 | [→ _CONTEXT.md](src/components/packing-list/_CONTEXT.md) |
 | `src/components/ui/` | 4 | [→ _CONTEXT.md](src/components/ui/_CONTEXT.md) |
 | `src/hooks/` | 1 | [→ _CONTEXT.md](src/hooks/_CONTEXT.md) |

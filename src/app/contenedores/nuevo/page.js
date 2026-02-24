@@ -17,7 +17,7 @@ export default function NuevoContenedorPage() {
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Nuevo Contenedor</h1>
 
             <form action={createContainer} className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm space-y-6">
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label htmlFor="origin_warehouse" className="block text-sm font-medium text-gray-700 mb-2">
                             Depósito de Origen *
@@ -64,7 +64,7 @@ export default function NuevoContenedorPage() {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label htmlFor="etd" className="block text-sm font-medium text-gray-700 mb-2">
                             ETD (Salida estimada)

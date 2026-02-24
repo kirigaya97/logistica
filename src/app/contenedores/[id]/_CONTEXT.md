@@ -1,26 +1,24 @@
-# 📁 src/app/contenedores/[id]
+# 📂 src/app/contenedores/[id]
 
 ## Propósito
-Este directorio maneja la vista de detalle dinámico para un contenedor específico. Centraliza la información del contenedor, muestra un resumen de la carga por cliente, y actúa como punto de acceso para la gestión de su packing list y la calculadora de costos asociada.
+Gestiona la visualización detallada, edición y el control del ciclo de vida de un contenedor específico, centralizando la información de carga, clientes involucrados y el acceso a módulos de costos y packing list.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `page.js` | Página principal que renderiza los detalles del contenedor. Obtiene datos de Supabase (contenedor, ítems, costos), calcula el volumen por cliente, maneja la edición en línea y orquesta las acciones de cambio de estado o eliminación. |
-| `costos/` | (Subdirectorio) Contiene la lógica y vistas para la calculadora de costos específica de este contenedor. |
-| `packing-list/` | (Subdirectorio) Contiene la interfaz y lógica para gestionar la lista de empaque (ítems) asignada a este contenedor. |
+| `page.js` | Componente de servidor que renderiza la ficha técnica del contenedor, maneja el modo edición mediante parámetros de URL y coordina las transiciones de estado. |
 
 ## Relaciones
-- **Usa**: 
-  - `@/lib/supabase/server` (consultas a la base de datos).
-  - `@/app/contenedores/actions` (Server Actions para actualizar estado o eliminar).
-  - `@/components/contenedores/*` (componentes modulares como `ContainerEditForm`, `DeleteContainerButton`, `RevertStatusButton`).
-  - `@/components/ui/*` (componentes base como `StatusBadge`, `ExportButton`).
-  - `@/lib/constants` (diccionarios estáticos: `WAREHOUSES`, `CONTAINER_TYPES`, `CONTAINER_STATES`).
-- **Usado por**: Navegación de Next.js. Accedido principalmente desde el listado general en `/contenedores`.
+- **Usa**: `@src/lib/supabase/server.js`, `@src/app/contenedores/actions.js`, `@src/lib/constants.js`, `@src/components/ui/StatusBadge.js`, `@src/components/contenedores/ContainerEditForm.js`, `@src/components/contenedores/DeleteContainerButton.js`, `@src/components/contenedores/RevertStatusButton.js`, `@src/components/ui/ExportButton.js`.
+- **Usado por**: Módulo principal de contenedores y sistema de navegación global.
 
 ## Detalles clave
-- **Máquina de estados simple:** Implementa un flujo lineal para el ciclo de vida del contenedor (`deposito` -> `transito` -> `aduana` -> `finalizado`), permitiendo avanzar o retroceder de estado mediante acciones del servidor.
-- **Agrupación dinámica:** Calcula en tiempo de ejecución (`customerBoard`) el volumen total y la cantidad de ítems agrupados por cliente para mostrar el panel "Clientes a bordo".
-- **Exportación integral:** Prepara un objeto `fullExportData` que consolida la cabecera del contenedor, todos sus ítems del packing list y sus costos para ser exportados globalmente a través del componente `ExportButton`.
-- **Soporte de edición in-line:** Utiliza parámetros de búsqueda en la URL (`?edit=true`) para alternar entre el modo de visualización y el formulario de edición de la cabecera del contenedor sin cambiar de ruta.
+- **Máquina de Estados**: Implementa un flujo lineal de estados (`deposito` -> `transito` -> `aduana` -> `finalizado`) permitiendo avanzar o revertir etapas según el progreso logístico.
+- **Edición Dinámica**: Utiliza el parámetro de búsqueda `?edit=true` para alternar entre la vista de detalles y el formulario de edición sin recargar la página.
+- **Inteligencia de Carga**: Realiza una agregación en tiempo real de los "Clientes a bordo", calculando el volumen total ocupado (m³) y la cantidad de bultos por cada cliente asignado al contenedor.
+- **Exportación Full**: Integra una función de exportación que consolida en un solo archivo Excel los datos del contenedor, la lista de empaque completa y el desglose de ítems de costos.
+- **Navegación Contextual**: Actúa como panel de control central con accesos directos protegidos por contexto hacia las sub-rutas de costos y packing list.
+
+## Subdirectorios
+- `costos/`: Gestión detallada de ítems de costo y cálculos financieros del contenedor.
+- `packing-list/`: Importación, clasificación y visualización de la mercadería transportada.

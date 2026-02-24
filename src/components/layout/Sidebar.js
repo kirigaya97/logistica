@@ -1,15 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
     LayoutDashboard, Container, Users, Tags, Box, Archive,
-    LogOut, Ship, Calculator
+    LogOut, Ship, Calculator, X
 } from 'lucide-react'
 import { NAV_GROUPS } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { useMobileMenu } from './MobileMenuContext'
 
 const iconMap = {
     LayoutDashboard, Container, Users, Tags, Box, Archive, Calculator
@@ -18,6 +18,7 @@ const iconMap = {
 export default function Sidebar() {
     const pathname = usePathname()
     const router = useRouter()
+    const { isOpen, close } = useMobileMenu()
     const [counts, setCounts] = useState({ activeContainers: 0 })
 
     useEffect(() => {
@@ -32,16 +33,21 @@ export default function Sidebar() {
         fetchCounts()
     }, [])
 
+    // Close mobile menu on route change
+    useEffect(() => {
+        close()
+    }, [pathname, close])
+
     async function handleLogout() {
         const supabase = createClient()
         await supabase.auth.signOut()
         router.push('/login')
     }
 
-    return (
-        <aside className="fixed left-0 top-0 h-full w-64 bg-gray-900 text-white flex flex-col">
+    const sidebarContent = (
+        <>
             {/* Logo */}
-            <div className="p-6 border-b border-gray-700">
+            <div className="p-6 border-b border-gray-700 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Ship className="w-8 h-8 text-blue-400" />
                     <div>
@@ -49,6 +55,13 @@ export default function Sidebar() {
                         <p className="text-xs text-gray-400">Internacional</p>
                     </div>
                 </div>
+                {/* Close button — mobile only */}
+                <button
+                    onClick={close}
+                    className="lg:hidden p-2 text-gray-400 hover:text-white"
+                >
+                    <X className="w-5 h-5" />
+                </button>
             </div>
 
             {/* Navigation */}
@@ -98,6 +111,30 @@ export default function Sidebar() {
                     Cerrar Sesión
                 </button>
             </div>
-        </aside>
+        </>
+    )
+
+    return (
+        <>
+            {/* Desktop Sidebar — always visible on lg+ */}
+            <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-gray-900 text-white flex-col z-30">
+                {sidebarContent}
+            </aside>
+
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div className="lg:hidden fixed inset-0 z-50">
+                    {/* Backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        onClick={close}
+                    />
+                    {/* Slide-in sidebar */}
+                    <aside className="relative w-72 h-full bg-gray-900 text-white flex flex-col shadow-2xl animate-in slide-in-from-left duration-200">
+                        {sidebarContent}
+                    </aside>
+                </div>
+            )}
+        </>
     )
 }

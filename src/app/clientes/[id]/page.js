@@ -74,7 +74,7 @@ export default async function ClientDetailPage({ params, searchParams }) {
 
                 <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm h-fit">
                     <h3 className="text-sm font-semibold text-gray-700 mb-4">Estadísticas Históricas</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-blue-50 rounded-lg p-4">
                             <p className="text-xs text-blue-600 mb-1">Contenedores</p>
                             <p className="text-xl font-bold text-blue-800">{client.stats?.containerCount || 0}</p>

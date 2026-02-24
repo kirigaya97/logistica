@@ -1,20 +1,20 @@
-# 📁 src/app/clientes
+# 📂 src/app/clientes
 
 ## Propósito
-Módulo encargado de la gestión integral de los clientes del sistema de logística. Permite visualizar el directorio de clientes, administrar su información básica, y controlar sus tarifas aplicables (locales e internacionales), además de recopilar estadísticas de sus operaciones.
+Este módulo centraliza la gestión de clientes de la plataforma, permitiendo administrar sus perfiles, configurar tarifas personalizadas (internacionales y locales) y visualizar métricas consolidadas de su carga.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `actions.js` | Server Actions que manejan el CRUD de clientes. Realiza validaciones, actualiza el historial de tarifas y calcula estadísticas cruzando datos con operaciones y contenedores. |
-| `page.js` | Componente de servidor (Server Component) que muestra el listado completo de clientes mediante una interfaz de tarjetas con su información principal y accesos a sus detalles. |
+| `actions.js` | Server Actions para operaciones CRUD de clientes, gestión de historial de tarifas y cálculo de estadísticas agregadas. |
+| `page.js` | Vista principal que muestra el listado de clientes en formato de tarjetas con resumen de ubicación y tarifas vigentes. |
 
 ## Relaciones
-- **Usa**: `@/lib/supabase/server` (Base de datos), `next/cache` (Revalidación de caché), `next/navigation` (Redirección), `zod` (Validación de esquemas) y `lucide-react` (Iconografía). También se relaciona de forma anidada con los subdirectorios `nuevo/` y `[id]/`.
-- **Usado por**: Por determinar (típicamente accedido desde la barra de navegación principal de la aplicación; sus datos son referenciados por los ítems del packing list).
+- **Usa**: `src/lib/supabase/server.js` para persistencia, `zod` para validación de formularios y `lucide-react` para la interfaz visual.
+- **Usado por**: Componentes de navegación global como el `Sidebar` y el sistema de asignación de clientes en los packing lists.
 
 ## Detalles clave
-- **Historial de Tarifas Automático**: Al actualizar un cliente en `actions.js`, el sistema detecta automáticamente si hubo cambios en la tarifa internacional o local y registra los valores anteriores y nuevos en la tabla `client_rate_history`.
-- **Cálculo de Estadísticas Agregadas**: La función de obtención de datos detallados extrae y acumula información de los `packing_list_items` asociados al cliente, calculando métricas en tiempo real como volumen total (m3), peso total (kg), y cantidad de contenedores únicos involucrados.
-- **Validación Estricta**: Emplea `zod` en las acciones del servidor para asegurar que los datos enviados desde los formularios (nombre, locación, tarifas) tengan el formato correcto antes de interactuar con Supabase.
-- **Mutaciones Seguras**: Utiliza Server Actions nativos de Next.js junto con `revalidatePath` para asegurar que la interfaz de usuario siempre refleje el estado más reciente de la base de datos tras crear, editar o eliminar un cliente.
+- **Historial de Tarifas**: Al actualizar un cliente, el sistema detecta cambios en las tarifas internacionales (USD) o locales (ARS) y registra automáticamente el valor previo y el nuevo en `client_rate_history`.
+- **Cálculos en Tiempo Real**: La función `getClientWithHistory` realiza un cruce de datos para calcular el volumen total, peso total y cantidad de contenedores únicos asociados a un cliente específico.
+- **Gestión de Etiquetas**: El sistema recupera y consolida las etiquetas (`tags`) de todos los ítems pertenecientes a un cliente para ofrecer una segmentación visual de su mercadería.
+- **Integración con Supabase**: Utiliza políticas de seguridad a nivel de servidor y revalidación de rutas (`revalidatePath`) para asegurar que la interfaz refleje los cambios inmediatamente.

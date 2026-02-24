@@ -29,7 +29,7 @@ export default function ClientSummary({ client }) {
     return (
         <div className="space-y-6">
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4 text-center">
                     <p className="text-xs text-gray-500">Contenedores</p>
                     <p className="text-2xl font-bold text-blue-700">{containers.length}</p>

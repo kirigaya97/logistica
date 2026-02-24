@@ -51,7 +51,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold text-gray-800">Panel de Control</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {/* Card: Contenedores */}
         <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
           <div className="flex items-center gap-4">

@@ -1,19 +1,20 @@
-# 📂 src/app/historico
+# 📁 src/app/historico
 
 ## Propósito
-Este directorio gestiona la vista del historial de operaciones logísticas. Su propósito principal es presentar un panel de lectura y un listado de todos los contenedores cuyo estado es estrictamente "finalizado", permitiendo la auditoría y consulta de registros pasados.
+Este módulo gestiona la visualización del historial de operaciones, listando exclusivamente los contenedores que han alcanzado el estado "finalizado". Proporciona una vista tabular de registros históricos junto con métricas rápidas de volumen de cierre mensual.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Componente de servidor que consulta los contenedores finalizados, calcula estadísticas temporales (total general y mes pasado) y renderiza una tabla resumen con enlaces al detalle. |
+| page.js | Server Component que consulta, filtra y muestra la lista de contenedores finalizados y estadísticas generales. |
 
 ## Relaciones
-- **Usa**: `@/lib/supabase/server` (conexión a base de datos), `@/lib/constants` (diccionarios de almacenes y tipos de contenedores), `@/components/ui/StatusBadge` (interfaz), `lucide-react` (iconografía) y `next/link` (navegación interna).
-- **Usado por**: Next.js App Router (expone la ruta de acceso público/autenticado `/historico` en la aplicación).
+- **Usa**: `@/lib/supabase/server.js` (acceso a datos), `@/lib/constants.js` (mapeo de depósitos y tipos), `@/components/ui/StatusBadge.js` (etiquetas visuales), `lucide-react` (iconos).
+- **Usado por**: Definido en el menú de navegación global (`NAV_GROUPS`) como acceso principal al archivo histórico.
 
 ## Detalles clave
-- La consulta de datos aplica un filtro fuerte en el servidor (`eq('status', 'finalizado')`), asegurando que solo se exponga la carga histórica.
-- Las estadísticas de "Finalizados Mes Pasado" se calculan dinámicamente en memoria evaluando la fecha de arribo (ETA) contra el mes y año actuales.
-- Es un React Server Component, por lo que la obtención de datos de Supabase y la resolución de constantes (origen, tipo de contenedor) ocurren del lado del servidor.
-- La tabla de resultados actúa como punto de entrada hacia la información detallada y de solo lectura de cada contenedor mediante la ruta `/contenedores/[id]`.
+- **Lógica de Filtrado**: Realiza una consulta a la tabla `containers` filtrando estrictamente por el valor `status = 'finalizado'`.
+- **Ordenamiento**: Los registros se presentan ordenados por fecha de arribo (ETA) de forma descendente.
+- **Estadísticas Dinámicas**: Calcula en tiempo real el total de contenedores finalizados y una comparativa del volumen de cierre correspondiente al mes anterior.
+- **Integración de Navegación**: Cada fila permite la redirección al detalle completo del contenedor mediante la ruta dinámica `/contenedores/[id]`.
+- **Localización**: Implementa formateo de fechas basado en la configuración regional `es-AR`.

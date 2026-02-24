@@ -116,7 +116,7 @@ export default async function ContainerDetailPage({ params, searchParams }) {
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                             <div className="bg-gray-50 rounded-lg p-4">
                                 <p className="text-xs text-gray-500 mb-1">Origen</p>
                                 <p className="font-medium"><MapPin className="w-4 h-4 inline mr-1" />{warehouse?.flag} {warehouse?.label}</p>

@@ -1,22 +1,20 @@
-# 📁 src/app/clientes/[id]
+# 📂 src/app/clientes/[id]
 
 ## Propósito
-Este directorio maneja la ruta dinámica para ver y gestionar los detalles de un cliente específico. Permite visualizar la información del cliente, sus estadísticas históricas de operaciones, y proporciona la interfaz para editar sus datos o eliminar el registro.
+Gestiona la visualización detallada, edición y eliminación de un cliente específico, integrando su historial de tarifas y estadísticas consolidadas de contenedores y carga.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `page.js` | Componente de servidor que renderiza la página de detalle del cliente, incluyendo tarjetas de información, estadísticas y el manejo condicional del modo de edición. |
+| page.js | Componente de servidor que renderiza la vista de detalles o el formulario de edición basado en el parámetro de búsqueda `edit`. |
 
 ## Relaciones
-- **Usa**: 
-  - Acciones de servidor (`@/app/clientes/actions`): `getClientWithHistory`, `updateClientAction`, `deleteClientAction`.
-  - Componentes de interfaz (`@/components/clientes`): `ClientForm`, `ClientSummary`.
-  - Herramientas de Next.js (`next/navigation`, `next/link`) e íconos (`lucide-react`).
-- **Usado por**: Enrutador de Next.js (App Router) al acceder a la ruta `/clientes/[id]`.
+- **Usa**: `@/lib/supabase/server`, `@/app/clientes/actions`, `@/components/clientes/ClientForm`, `@/components/clientes/ClientSummary`, `next/navigation`.
+- **Usado por**: Router de Next.js para la ruta dinámica `/clientes/[id]`.
 
 ## Detalles clave
-- **Edición contextual**: Utiliza parámetros de búsqueda en la URL (`?edit=true`) para alternar fluidamente entre la vista de solo lectura y el formulario de edición sin cambiar de ruta.
-- **Server Actions vinculadas**: Las acciones de actualización y eliminación se vinculan (bind) con el `id` del cliente directamente en el componente de servidor para su uso seguro en formularios.
-- **Agregación de datos**: Renderiza estadísticas históricas pre-calculadas como la cantidad de contenedores operados, volumen total y un listado de etiquetas únicas utilizadas.
-- **Validación de existencia**: Implementa `notFound()` si el `id` proporcionado no corresponde a un cliente válido en la base de datos.
+- **Modo Edición**: Utiliza el searchParam `?edit=true` para alternar entre la visualización de datos (`ClientSummary`) y el formulario de actualización (`ClientForm`).
+- **Acciones Vinculadas**: Emplea `.bind(null, id)` para pasar el ID del cliente a las Server Actions de actualización y eliminación de forma segura.
+- **Agregación de Datos**: La función `getClientWithHistory` consolida información de múltiples tablas: datos base del cliente, historial de cambios en tarifas y estadísticas calculadas (volumen total, peso y etiquetas únicas) de los items en listas de empaque.
+- **Historial de Tarifas**: El sistema detecta cambios en las tarifas internacionales (USD) o locales (ARS) durante la actualización y registra automáticamente el valor anterior y nuevo en la tabla `client_rate_history`.
+- **Navegación**: Incluye validación de existencia mediante `notFound()` si el cliente no es recuperado de la base de datos.
