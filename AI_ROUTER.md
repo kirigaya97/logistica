@@ -23,7 +23,18 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 
 | Directorio | Archivos | Contexto |
 |---|---|---|
+| `src/app/calculadora-volumetrica/` | 1 | [→ _CONTEXT.md](src/app/calculadora-volumetrica/_CONTEXT.md) |
+| `src/app/clientes/` | 1 | [→ _CONTEXT.md](src/app/clientes/_CONTEXT.md) |
+| `src/app/contenedores/` | 1 | [→ _CONTEXT.md](src/app/contenedores/_CONTEXT.md) |
+| `src/app/etiquetas/` | 1 | [→ _CONTEXT.md](src/app/etiquetas/_CONTEXT.md) |
+| `src/app/historico/` | 1 | [→ _CONTEXT.md](src/app/historico/_CONTEXT.md) |
+| `src/app/login/` | 1 | [→ _CONTEXT.md](src/app/login/_CONTEXT.md) |
 | `src/app/` | 3 | [→ _CONTEXT.md](src/app/_CONTEXT.md) |
+| `src/components/layout/` | 2 | [→ _CONTEXT.md](src/components/layout/_CONTEXT.md) |
+| `src/lib/supabase/` | 2 | [→ _CONTEXT.md](src/lib/supabase/_CONTEXT.md) |
+| `src/lib/` | 1 | [→ _CONTEXT.md](src/lib/_CONTEXT.md) |
+| `src/` | 1 | [→ _CONTEXT.md](src/_CONTEXT.md) |
+| `supabase/migrations/` | 1 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
 | `./` | 3 | [→ _CONTEXT.md](./_CONTEXT.md) |
 
 ## Documentación
