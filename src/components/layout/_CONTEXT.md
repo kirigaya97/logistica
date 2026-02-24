@@ -1,23 +1,20 @@
-# 📂 src/components/layout
+# 🏗️ src/components/layout
 
 ## Propósito
-Este directorio contiene los componentes estructurales de interfaz de usuario que se comparten a través de las diferentes páginas de la aplicación. Proporciona la plantilla visual base, incluyendo la navegación y la barra superior, manteniendo una experiencia de usuario consistente.
+Este directorio contiene los componentes estructurales que definen el marco visual y la navegación persistente de la plataforma, asegurando una experiencia de usuario coherente en toda la aplicación.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `Header.js` | Componente de servidor que renderiza la barra superior y muestra la información del usuario autenticado (email e inicial). |
-| `Sidebar.js` | Componente de cliente que provee la barra de navegación lateral principal, iterando sobre las rutas del sistema y manejando la acción de cierre de sesión. |
+| Header.js | Componente de servidor que muestra la identidad del usuario autenticado y actúa como contenedor para la navegación secundaria (breadcrumbs). |
+| Sidebar.js | Barra de navegación lateral que gestiona el acceso a los módulos principales, el estado activo de las rutas y la funcionalidad de cierre de sesión. |
 
 ## Relaciones
-- **Usa**: 
-  - `@/lib/supabase/server` y `@/lib/supabase/client` (para autenticación y gestión de sesión).
-  - `@/lib/constants` (para definir los elementos del menú `NAV_ITEMS`).
-  - `next/link`, `next/navigation` (para el enrutamiento y detección de ruta activa).
-  - `lucide-react` (para la iconografía de la interfaz).
-- **Usado por**: Típicamente consumido por los archivos de layout de Next.js (como `src/app/layout.js`).
+- **Usa**: `@/lib/supabase/server`, `@/lib/supabase/client`, `@/lib/constants` (NAV_ITEMS), `lucide-react`, `next/link`, `next/navigation`.
+- **Usado por**: `src/app/layout.js` (Estructura base de la aplicación).
 
 ## Detalles clave
-- **Arquitectura de componentes**: `Header.js` es un Server Component que aprovecha la obtención directa de datos de sesión desde el servidor, mientras que `Sidebar.js` es un Client Component (`'use client'`) debido a su interactividad y uso de hooks (`usePathname`, `useRouter`).
-- **Navegación dinámica**: El menú lateral se renderiza de forma dinámica consumiendo la constante `NAV_ITEMS`, facilitando la adición de nuevas secciones en el futuro sin modificar el componente.
-- **Gestión de sesión**: El `Sidebar` incluye directamente la lógica de cierre de sesión (`signOut`), redirigiendo al usuario a la vista de `/login` tras ejecutar la acción.
+- **Estrategia de Componentes**: Combina Server Components (Header) para la obtención eficiente de datos de sesión y Client Components (Sidebar) para la interactividad de la interfaz.
+- **Navegación Dinámica**: El Sidebar se construye a partir de la constante `NAV_ITEMS`, utilizando un mapeo de iconos (`iconMap`) para renderizar componentes de Lucide dinámicamente.
+- **Gestión de Sesión**: Integración directa con Supabase Auth para mostrar el perfil del usuario en el encabezado y ejecutar el proceso de `signOut` en el menú lateral.
+- **Layout Fijo**: El Sidebar utiliza posicionamiento fijo (`fixed`) para mantener la navegación siempre accesible mientras el contenido principal se desplaza.

@@ -179,12 +179,14 @@ async function generateWithGeminiCLI(dirInfo, existingManualSections) {
         writeFileSync(tempPromptFile, prompt, 'utf-8');
 
         // Windows-compatible: use PowerShell Get-Content to pipe into gemini
+        // stdio: ignore stderr to suppress Gemini CLI's IDEClient warnings
         const result = execSync(
             `powershell -Command "Get-Content -Path '${tempPromptFile.replace(/'/g, "''")}' -Raw | gemini"`,
             {
                 encoding: 'utf-8',
                 timeout: 60000,
                 maxBuffer: 1024 * 1024, // 1MB output buffer
+                stdio: ['pipe', 'pipe', 'ignore'],
             }
         );
 

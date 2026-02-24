@@ -1,20 +1,18 @@
-Voy a crear el archivo `_CONTEXT.md` en el directorio solicitado con la información técnica correspondiente.
-
-# 📂 src/app/calculadora-volumetrica
+# 📁 src/app/calculadora-volumetrica
 
 ## Propósito
-Este directorio contiene la página de la calculadora volumétrica, una herramienta esencial para determinar el peso facturable de las cargas en el transporte internacional basado en sus dimensiones físicas.
+Este directorio aloja el módulo de la Calculadora Volumétrica, una herramienta destinada al cálculo de volúmenes para operaciones de logística internacional. En su estado actual, sirve como un marcador de posición (placeholder) en la aplicación para una funcionalidad futura.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Punto de entrada principal de la ruta que renderiza la interfaz de la calculadora (actualmente en estado de construcción). |
+| page.js | Componente de página de Next.js que define la ruta `/calculadora-volumetrica` y muestra temporalmente el mensaje "Módulo en construcción". |
 
 ## Relaciones
-- **Usa**: Ninguno (sin dependencias externas directas en su estado actual).
-- **Usado por**: Next.js App Router (mapeado a la ruta `/calculadora-volumetrica`).
+- **Usa**: Ninguno (actualmente no importa componentes ni librerías externas).
+- **Usado por**: Sistema de enrutamiento de Next.js (App Router) para exponer la URL `/calculadora-volumetrica` a los usuarios.
 
 ## Detalles clave
-- Implementado como un Server Component por defecto dentro de la estructura de App Router.
-- Estado actual: Marcador de posición (Placeholder) que indica "Módulo en construcción".
-- Objetivo funcional: Permitir el ingreso de dimensiones y cantidad de bultos para calcular el peso volumétrico según estándares de logística internacional.
+- El desarrollo de este módulo se encuentra en su fase inicial o pendiente.
+- Emplea clases utilitarias de Tailwind CSS para aplicar estilos básicos (tamaño de fuente, colores y márgenes).
+- Sigue la convención de Next.js App Router utilizando `page.js` para definir la interfaz de la ruta.

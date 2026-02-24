@@ -1,21 +1,20 @@
-# 📁 src/app/login
+# 📂 src/app/login
 
 ## Propósito
-Este directorio contiene la página de autenticación de la aplicación, permitiendo a los usuarios iniciar sesión en el sistema de logística internacional mediante sus credenciales.
+Este directorio contiene la interfaz y la lógica de autenticación de la aplicación. Proporciona la página de inicio de sesión para que los usuarios accedan a la plataforma de logística internacional.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Componente de cliente que renderiza el formulario de inicio de sesión y gestiona la lógica de autenticación con Supabase. |
+| `page.js` | Componente de cliente que renderiza el formulario de inicio de sesión y gestiona la autenticación de usuarios contra Supabase. |
 
 ## Relaciones
-- **Usa**: @/lib/supabase/client (cliente de autenticación), next/navigation (enrutamiento), lucide-react (iconos), react (gestión del estado local).
-- **Usado por**: El enrutador de Next.js al acceder a la ruta /login.
+- **Usa**: `@/lib/supabase/client` (para el cliente de base de datos y autenticación), `next/navigation` (para redirección de rutas), `lucide-react` (para iconos).
+- **Usado por**: El sistema de enrutamiento de Next.js (ruta pública accesible por usuarios no autenticados).
 
 ## Detalles clave
-- Implementado como un Client Component para gestionar el estado interactivo del formulario.
-- Utiliza el método de autenticación por correo electrónico y contraseña a través de la instancia del cliente de Supabase.
-- Redirige a la página principal (raíz) tras un inicio de sesión exitoso y fuerza un refresco de la ruta.
-- Previene envíos múltiples implementando un estado de carga que deshabilita el botón de acceso.
-- Maneja los errores de inicio de sesión mostrando un mensaje genérico ("Email o contraseña incorrectos") por motivos de seguridad.
-- La interfaz gráfica utiliza clases utilitarias de Tailwind CSS para su diseño responsivo y estilo visual.
+- Componente de cliente (`'use client'`) que maneja estados locales para email, contraseña, carga y errores.
+- La autenticación se realiza mediante el método `signInWithPassword` de Supabase Auth.
+- Tras un inicio de sesión exitoso, redirige a la raíz (`/`) y fuerza un refresco del enrutador (`router.refresh()`) para actualizar el estado de la sesión en toda la app.
+- El diseño utiliza clases de utilidad de Tailwind CSS con una paleta de colores en tonos oscuros (gray-900, gray-800).
+- Contiene manejo de errores básico, mostrando un mensaje en pantalla si las credenciales son incorrectas.

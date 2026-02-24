@@ -1,18 +1,18 @@
-# 📂 src/app/clientes
+# 📦 src/app/clientes
 
 ## Propósito
-Módulo de gestión de clientes del sistema de logística. Actualmente se encuentra en fase de construcción, destinado a ser la interfaz principal para administrar la cartera de clientes.
+Este directorio define la ruta y la interfaz para la gestión de clientes dentro de la plataforma de logística. Actualmente funciona como un marcador de posición para el futuro desarrollo del módulo.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Componente principal de la interfaz para la ruta `/clientes`, muestra un mensaje temporal indicando que el módulo está en construcción. |
+| page.js | Componente principal de la página que visualiza el estado actual del módulo de clientes. |
 
 ## Relaciones
-- **Usa**: Ninguno (no cuenta con importaciones o dependencias actualmente).
-- **Usado por**: Enrutador de Next.js (como la ruta `/clientes`).
+- **Usa**: Tailwind CSS para estilos básicos.
+- **Usado por**: Sistema de enrutamiento (App Router) de Next.js.
 
 ## Detalles clave
-- Actúa como un marcador de posición (placeholder) para la futura implementación de la vista y lógica de clientes.
-- Utiliza clases utilitarias de Tailwind CSS para el diseño visual básico.
-- Funciona como un Server Component por defecto, al no incluir la directiva "use client".
+- El módulo se encuentra actualmente en fase de construcción.
+- Utiliza componentes funcionales de React y convenciones de Next.js 13/14+.
+- La interfaz actual es minimalista y sirve como punto de entrada para futuras implementaciones de CRUD de clientes.
