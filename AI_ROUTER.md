@@ -25,6 +25,7 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 |---|---|---|
 | `src/app/api/exchange-rate/` | 1 | [→ _CONTEXT.md](src/app/api/exchange-rate/_CONTEXT.md) |
 | `src/app/calculadora-costos/config/` | 1 | [→ _CONTEXT.md](src/app/calculadora-costos/config/_CONTEXT.md) |
+| `src/app/calculadora-costos/[id]/` | 1 | [→ _CONTEXT.md](src/app/calculadora-costos/[id]/_CONTEXT.md) |
 | `src/app/calculadora-costos/` | 2 | [→ _CONTEXT.md](src/app/calculadora-costos/_CONTEXT.md) |
 | `src/app/calculadora-volumetrica/` | 1 | [→ _CONTEXT.md](src/app/calculadora-volumetrica/_CONTEXT.md) |
 | `src/app/clientes/nuevo/` | 1 | [→ _CONTEXT.md](src/app/clientes/nuevo/_CONTEXT.md) |
@@ -39,7 +40,7 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 | `src/app/historico/` | 1 | [→ _CONTEXT.md](src/app/historico/_CONTEXT.md) |
 | `src/app/login/` | 1 | [→ _CONTEXT.md](src/app/login/_CONTEXT.md) |
 | `src/app/` | 3 | [→ _CONTEXT.md](src/app/_CONTEXT.md) |
-| `src/components/calculadora/` | 4 | [→ _CONTEXT.md](src/components/calculadora/_CONTEXT.md) |
+| `src/components/calculadora/` | 5 | [→ _CONTEXT.md](src/components/calculadora/_CONTEXT.md) |
 | `src/components/clientes/` | 2 | [→ _CONTEXT.md](src/components/clientes/_CONTEXT.md) |
 | `src/components/contenedores/` | 5 | [→ _CONTEXT.md](src/components/contenedores/_CONTEXT.md) |
 | `src/components/layout/` | 3 | [→ _CONTEXT.md](src/components/layout/_CONTEXT.md) |
@@ -52,7 +53,7 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 | `src/lib/utils/` | 1 | [→ _CONTEXT.md](src/lib/utils/_CONTEXT.md) |
 | `src/lib/` | 1 | [→ _CONTEXT.md](src/lib/_CONTEXT.md) |
 | `src/` | 1 | [→ _CONTEXT.md](src/_CONTEXT.md) |
-| `supabase/migrations/` | 7 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
+| `supabase/migrations/` | 8 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
 | `./` | 3 | [→ _CONTEXT.md](./_CONTEXT.md) |
 
 ## Documentación

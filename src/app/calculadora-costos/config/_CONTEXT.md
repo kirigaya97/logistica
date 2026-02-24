@@ -1,19 +1,19 @@
-# 📁 src/app/calculadora-costos/config
+# 📂 src/app/calculadora-costos/config
 
 ## Propósito
-Este directorio contiene la página de configuración para la plantilla de costos por defecto de la calculadora. Permite a los usuarios ajustar los valores porcentuales o fijos base que se aplicarán automáticamente a los nuevos contenedores.
+Módulo dedicado a la gestión y configuración de plantillas de costos internacionales. Permite definir perfiles de gastos predeterminados (items, valores y tipos) que se aplican automáticamente a nuevos contenedores o simulaciones.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `page.js` | Página de servidor (Server Component) que carga la plantilla actual, advierte sobre el impacto de los cambios y renderiza la matriz de costos para su edición interactiva. |
+| page.js | Página de servidor que coordina la carga de plantillas existentes y el detalle de los items de la plantilla activa para su edición. |
 
 ## Relaciones
-- **Usa**: `../actions` (`getDefaultTemplate`, `saveDefaultTemplate`), `@/lib/calculadora/defaults` (`DEFAULT_COST_MATRIX`), `@/components/calculadora/CostMatrix`, `lucide-react` (iconos), `next/link`.
-- **Usado por**: Interfaz principal de la aplicación (navegable desde el simulador de calculadora de costos).
+- **Usa**: `src/app/calculadora-costos/actions.js` (Server Actions), `src/components/calculadora/TemplateManager.js` (Componente de UI), `lucide-react` (Iconografía), `next/link`.
+- **Usado por**: Vinculado desde el simulador principal (`/calculadora-costos`) para permitir ajustes en la estructura de costos base.
 
 ## Detalles clave
-- **Persistencia mediante Server Actions**: Utiliza una Server Action en línea (`handleSave`) para guardar la estructura y los valores editados de la plantilla directamente en el servidor.
-- **Renderizado de Vista Previa**: Inyecta un objeto `mockCalculation` con un valor FOB fijo de 1000 y asignaciones temporales de IDs y propiedades (`value_type`, `is_active`) para permitir que el componente genérico `CostMatrix` funcione como un editor de plantillas.
-- **Regla de Negocio de Inmutabilidad Histórica**: Existe una regla crítica de negocio comunicada explícitamente en la UI: los cambios en la plantilla solo aplican a nuevos contenedores, sin afectar a simulaciones guardadas ni contenedores preexistentes.
-- **Reutilización Estratégica**: Emplea el mismo componente visual `CostMatrix` utilizado en la simulación activa de costos, pasándole funciones de callback adaptadas (`onSave`) para un propósito de configuración en lugar de simulación pura.
+- **Gestión de Plantillas**: Soporta una "Plantilla Base" (global y protegida contra eliminación) y múltiples plantillas personalizadas creadas por el usuario.
+- **Navegación por Slug**: Utiliza el parámetro de búsqueda `slug` en la URL para determinar qué perfil de costos se visualiza y edita en el `TemplateManager`.
+- **Integración de Componentes**: Delega la lógica de edición masiva al componente `CostMatrix`, permitiendo previsualizar el impacto de los cambios en una estructura de costos simulada.
+- **Flujo de Trabajo**: Los cambios realizados se impactan directamente en la base de datos a través de acciones de servidor, asegurando la consistencia en futuros cálculos.

@@ -5,7 +5,7 @@ import { calculateCosts } from '@/lib/calculadora/engine'
 import { CATEGORY_LABELS } from '@/lib/calculadora/defaults'
 import { DollarSign, Eye, EyeOff, Save, Loader2 } from 'lucide-react'
 
-export default function CostMatrix({ calculation, onSave }) {
+export default function CostMatrix({ calculation, onSave, readOnly = false }) {
     const [fob, setFob] = useState(calculation?.fob_total || 0)
     const [items, setItems] = useState(
         (calculation?.cost_items || [])
@@ -22,17 +22,18 @@ export default function CostMatrix({ calculation, onSave }) {
     const result = calculateCosts({ fobTotal: fob }, items)
 
     const updateItem = useCallback((id, field, value) => {
+        if (readOnly) return
         setItems(prev => prev.map(item =>
             item.id === id ? { ...item, [field]: value } : item
         ))
         setIsDirty(true)
-    }, [])
+    }, [readOnly])
 
     async function handleSave() {
-        if (!onSave) return
+        if (!onSave || readOnly) return
         setSaving(true)
         try {
-            await onSave({ fobTotal: fob, items })
+            await onSave({ fobTotal: fob, items, result })
             setIsDirty(false)
         } catch (e) {
             alert(e.message)
@@ -59,11 +60,12 @@ export default function CostMatrix({ calculation, onSave }) {
                     type="number"
                     step="0.01"
                     value={fob || ''}
+                    disabled={readOnly}
                     onChange={(e) => {
                         setFob(parseFloat(e.target.value) || 0)
                         setIsDirty(true)
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-lg font-medium"
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-lg font-medium ${readOnly ? 'bg-gray-50 cursor-not-allowed' : ''}`}
                     placeholder="0.00"
                 />
             </div>
@@ -81,8 +83,9 @@ export default function CostMatrix({ calculation, onSave }) {
                                 <div key={item.id} className={`flex items-center gap-3 py-2 px-3 rounded-lg ${item.isActive ? 'bg-gray-50' : 'bg-gray-100 opacity-50'}`}>
                                     <button
                                         type="button"
+                                        disabled={readOnly}
                                         onClick={() => updateItem(item.id, 'isActive', !item.isActive)}
-                                        className="text-gray-400 hover:text-gray-600"
+                                        className={`text-gray-400 ${readOnly ? '' : 'hover:text-gray-600'}`}
                                     >
                                         {item.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                     </button>
@@ -93,9 +96,10 @@ export default function CostMatrix({ calculation, onSave }) {
                                                 <input
                                                     type="number"
                                                     step="0.01"
+                                                    disabled={readOnly}
                                                     value={item.value || ''}
                                                     onChange={(e) => updateItem(item.id, 'value', parseFloat(e.target.value) || 0)}
-                                                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-right"
+                                                    className={`w-20 px-2 py-1 border border-gray-300 rounded text-sm text-right ${readOnly ? 'bg-transparent border-transparent' : ''}`}
                                                 />
                                                 <span className="text-xs text-gray-400">%</span>
                                             </div>
@@ -105,9 +109,10 @@ export default function CostMatrix({ calculation, onSave }) {
                                                 <input
                                                     type="number"
                                                     step="0.01"
+                                                    disabled={readOnly}
                                                     value={item.value || ''}
                                                     onChange={(e) => updateItem(item.id, 'value', parseFloat(e.target.value) || 0)}
-                                                    className="w-28 px-2 py-1 border border-gray-300 rounded text-sm text-right"
+                                                    className={`w-28 px-2 py-1 border border-gray-300 rounded text-sm text-right ${readOnly ? 'bg-transparent border-transparent' : ''}`}
                                                 />
                                             </div>
                                         )}
@@ -139,16 +144,18 @@ export default function CostMatrix({ calculation, onSave }) {
             </div>
 
             {/* Save Button Floating */}
-            <div className={`sticky bottom-6 flex justify-end transition-all pb-4 ${isDirty ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-                <button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-xl hover:bg-blue-700 flex items-center gap-2 font-semibold border-2 border-white"
-                >
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    {saving ? 'Guardando...' : 'Guardar Cambios'}
-                </button>
-            </div>
+            {!readOnly && (
+                <div className={`sticky bottom-6 flex justify-end transition-all pb-4 ${isDirty ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-xl hover:bg-blue-700 flex items-center gap-2 font-semibold border-2 border-white"
+                    >
+                        {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {saving ? 'Guardando...' : 'Guardar Cambios'}
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

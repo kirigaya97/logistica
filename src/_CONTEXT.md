@@ -1,19 +1,19 @@
-# 📁 src
+# 📂 src
 
 ## Propósito
-Directorio principal del código fuente de la aplicación Next.js, encargado de centralizar la estructura de rutas, componentes de interfaz de usuario, hooks personalizados y lógica de negocio para la plataforma de logística internacional.
+Directorio raíz del código fuente de la aplicación que centraliza la lógica de negocio, la interfaz de usuario y las configuraciones de flujo de trabajo para el sistema de gestión logística internacional.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| middleware.js | Intercepta las peticiones de Next.js utilizando Supabase para verificar la autenticación del usuario y gestionar las redirecciones entre la página de acceso y las rutas protegidas. |
+| `middleware.js` | Gestiona la autenticación global y la protección de rutas, redirigiendo usuarios según su estado de sesión mediante Supabase SSR. |
 
 ## Relaciones
-- **Usa**: @supabase/ssr, next/server
-- **Usado por**: Entorno de ejecución de Next.js
+- **Usa**: `@supabase/ssr`, `next/server`
+- **Usado por**: Next.js (ejecución a nivel de servidor)
 
 ## Detalles clave
-- Sincroniza las cookies de sesión de Supabase con la respuesta del servidor para mantener el estado de autenticación.
-- Bloquea el acceso a rutas protegidas para usuarios no logueados, redirigiéndolos obligatoriamente a `/login`.
-- Evita que usuarios ya autenticados vuelvan a acceder a la pantalla de `/login`, enviándolos a la raíz de la aplicación.
-- Optimiza el rendimiento excluyendo del análisis del middleware a los archivos estáticos, imágenes y rutas de API mediante una expresión regular en su configuración.
+- **Autenticación**: El middleware actúa como guardia de seguridad, asegurando que solo usuarios autenticados accedan a las rutas operativas (excepto `/login` y archivos estáticos).
+- **Gestión de Sesión**: Implementa una lógica de sincronización de cookies para mantener el estado de Supabase entre el servidor y el cliente.
+- **Estructura Modular**: Organiza el proyecto siguiendo las convenciones de Next.js App Router, separando componentes, hooks y utilitarios en subdirectorios especializados.
+- **Exclusiones**: El matcher del middleware está configurado para ignorar assets estáticos (imágenes, favicons) y rutas de API para optimizar el rendimiento.

@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function saveSimulation(name, fobTotal, items) {
+export async function saveSimulation(name, fobTotal, items, snapshot) {
     const supabase = await createClient()
 
     const { data, error } = await supabase
@@ -11,7 +11,8 @@ export async function saveSimulation(name, fobTotal, items) {
         .insert({
             name,
             fob_total: fobTotal,
-            items: items // items is expected to be a JSONB compatible object/array
+            items: items, // items is expected to be a JSONB compatible object/array
+            snapshot: snapshot || null,
         })
         .select()
         .single()
@@ -19,6 +20,18 @@ export async function saveSimulation(name, fobTotal, items) {
     if (error) throw new Error(`Error al guardar simulación: ${error.message}`)
 
     revalidatePath('/calculadora-costos')
+    return data
+}
+
+export async function getSimulation(id) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+        .from('cost_simulations')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+    if (error) throw new Error(`Error al obtener simulación: ${error.message}`)
     return data
 }
 
@@ -44,6 +57,74 @@ export async function deleteSimulation(id) {
     if (error) throw new Error(`Error al eliminar simulación: ${error.message}`)
 
     revalidatePath('/calculadora-costos')
+}
+
+export async function getTemplates() {
+    const supabase = await createClient()
+    const { data } = await supabase
+        .from('cost_template_config')
+        .select('id, name, slug, is_default')
+        .order('is_default', { ascending: false })
+        .order('name')
+
+    return data || []
+}
+
+export async function getTemplateItems(slug) {
+    const supabase = await createClient()
+    const { data } = await supabase
+        .from('cost_template_config')
+        .select('items')
+        .eq('slug', slug)
+        .maybeSingle()
+
+    return data?.items || null
+}
+
+export async function saveTemplate(slug, items) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('cost_template_config')
+        .update({
+            items,
+            updated_at: new Date().toISOString()
+        })
+        .eq('slug', slug)
+
+    if (error) throw new Error(`Error al guardar plantilla: ${error.message}`)
+
+    revalidatePath('/calculadora-costos/config')
+    revalidatePath('/calculadora-costos')
+}
+
+export async function createTemplate(name, slug, items) {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+        .from('cost_template_config')
+        .insert({ name, slug, is_default: false, items })
+        .select()
+        .single()
+
+    if (error) throw new Error(`Error al crear plantilla: ${error.message}`)
+
+    revalidatePath('/calculadora-costos/config')
+    return data
+}
+
+export async function deleteTemplate(slug) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('cost_template_config')
+        .delete()
+        .eq('slug', slug)
+        .neq('is_default', true)
+
+    if (error) throw new Error(`Error al eliminar plantilla: ${error.message}`)
+
+    revalidatePath('/calculadora-costos/config')
 }
 
 export async function saveDefaultTemplate(items) {

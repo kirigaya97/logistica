@@ -1,21 +1,25 @@
-# 📂 src/app/calculadora-costos
+# 🧮 src/app/calculadora-costos
 
 ## Propósito
-Este módulo proporciona la interfaz y la lógica del lado del servidor para realizar y gestionar simulaciones de costos de importación de forma independiente a un contenedor específico. Permite a los usuarios crear, visualizar y eliminar simulaciones, además de gestionar una plantilla de costos predeterminada.
+Este módulo proporciona una herramienta de simulación de costos de importación independiente de los contenedores operativos. Permite proyectar gastos, tributos e impuestos basados en plantillas configurables y guardar dichas simulaciones para análisis histórico y toma de decisiones.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `actions.js` | Define las Server Actions encargadas de la persistencia de datos en Supabase (guardar, obtener y eliminar simulaciones en `cost_simulations`, y gestionar la plantilla base en `cost_template_config`). |
-| `page.js` | Página principal que obtiene las simulaciones históricas y la plantilla por defecto desde el servidor para luego renderizar la interfaz a través del componente `Simulator`. |
-| `config/` | Subdirectorio que contiene la página dedicada a la configuración de la plantilla de costos por defecto. |
+| `actions.js` | Define las Server Actions para el manejo de persistencia en Supabase, incluyendo el CRUD de simulaciones y la gestión de plantillas de costos. |
+| `page.js` | Punto de entrada principal que recupera en paralelo las simulaciones, plantillas e ítems de configuración para inicializar el componente Simulator. |
+
+## Subdirectorios
+- `config/`: Interfaz para la personalización y creación de plantillas de costos (items, porcentajes y tipos de cálculo).
+- `[id]/`: Vista de detalle para consultar una simulación guardada específica mediante su identificador.
 
 ## Relaciones
-- **Usa**: `@/lib/supabase/server` (cliente de base de datos), `next/cache` (revalidación de rutas), `@/components/calculadora/Simulator` (componente visual principal), `@/lib/calculadora/defaults` (valores constantes predeterminados) y `lucide-react` (iconografía).
-- **Usado por**: Actúa como ruta de página en el App Router de Next.js, siendo accesible directamente por la navegación del usuario.
+- **Usa**: `@/lib/supabase/server`, `@/components/calculadora/Simulator`, `@/lib/calculadora/defaults`, `lucide-react`, `next/cache`.
+- **Usado por**: Menú de navegación principal (Sidebar) como herramienta central de análisis de costos.
 
 ## Detalles clave
-- Utiliza el patrón de Server Actions (`'use server'`) para mantener la lógica de base de datos segura y separada del cliente.
-- Las simulaciones de costos almacenan la estructura de los ítems en formato `JSONB`, lo que da flexibilidad a los elementos que componen la simulación.
-- Incorpora un sistema de plantillas por defecto (`is_default: true` en `cost_template_config`) que impacta tanto en las nuevas simulaciones como en los cálculos de los contenedores a nivel general.
-- Emplea `revalidatePath` para actualizar la memoria caché de las rutas `/calculadora-costos`, `/calculadora-costos/config` y `/contenedores` tras cualquier mutación, asegurando que la UI siempre muestre datos frescos.
+- **Snapshots de Datos**: Al guardar una simulación, se almacena un "snapshot" (captura) del resultado calculado para preservar la integridad de los datos históricos frente a cambios futuros en las plantillas.
+- **Configuración por Plantillas**: Utiliza un sistema de `slugs` para alternar entre diferentes estructuras de costos (ej. "default", "especial"), permitiendo simular bajo distintos regímenes impositivos o logísticos.
+- **Carga Eficiente**: Implementa `Promise.all` en el Server Component para minimizar la latencia al obtener datos de simulaciones y configuraciones de forma simultánea.
+- **Cálculos Desvinculados**: Diseñado para funcionar sin necesidad de un contenedor o packing list real, utilizando valores FOB manuales para las proyecciones.
+- **Sincronización de Cache**: Utiliza `revalidatePath` para garantizar que los cambios en las plantillas se reflejen inmediatamente tanto en el simulador como en el módulo de contenedores.
