@@ -1,21 +1,21 @@
-# 📁 Raíz del Proyecto (/)
+# 📁 /
 
 ## Propósito
-Este directorio actúa como la base de la aplicación Next.js para logística internacional. Contiene los archivos de configuración global esenciales para el entorno de desarrollo, la construcción del proyecto, el formateo de código y los estilos.
+Este es el directorio raíz del proyecto Next.js de logística internacional. Contiene los archivos de configuración principales para el framework, el linter y las herramientas de estilos globales que aplican a toda la aplicación.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `eslint.config.mjs` | Configuración global de ESLint que implementa las reglas recomendadas de Next.js (`core-web-vitals`) y define las carpetas ignoradas para el análisis estático. |
-| `next.config.mjs` | Archivo principal de configuración para el framework Next.js donde se definen opciones de compilación y comportamiento del servidor. |
-| `postcss.config.mjs` | Configuración de PostCSS, encargada de procesar los estilos e integrar los plugins necesarios, en este caso Tailwind CSS. |
+| `eslint.config.mjs` | Configuración de ESLint para el proyecto, define las reglas recomendadas de Next.js (core-web-vitals) y los directorios a ignorar. |
+| `next.config.mjs` | Archivo principal de configuración para el framework Next.js. |
+| `postcss.config.mjs` | Configuración de PostCSS, encargado de registrar los plugins de estilos como Tailwind CSS. |
 
 ## Relaciones
-- **Usa**: Framework Next.js (`next`), herramientas de linting (`eslint/config`, `eslint-config-next`), y plugins de estilos (`@tailwindcss/postcss`).
-- **Usado por**: Herramientas de compilación, empaquetado y el servidor de desarrollo en todo el ciclo de vida del proyecto.
+- **Usa**: `eslint/config`, `eslint-config-next/core-web-vitals`, `@tailwindcss/postcss`
+- **Usado por**: Todo el proyecto (las configuraciones aquí definidas aplican globalmente a la aplicación).
 
 ## Detalles clave
-- Sirve como punto de entrada de la configuración para toda la infraestructura frontend del proyecto de logística.
-- Establece Tailwind CSS como el motor principal para el manejo de estilos en la aplicación.
-- Separa claramente la arquitectura manteniendo el código fuente en `src/` y las configuraciones de base de datos en `supabase/`.
-- Prioriza las mejores prácticas de rendimiento en Next.js al aplicar las reglas de linting `core-web-vitals`.
+- Centraliza las configuraciones globales de las herramientas de desarrollo del proyecto.
+- Utiliza `@tailwindcss/postcss` como plugin de PostCSS, lo que indica el uso de Tailwind CSS v4+ para el manejo de estilos.
+- Define ignorados globales específicos para la construcción de Next.js en el linter (ej. `.next/**`, `out/**`, `build/**`).
+- Divide la estructura principal del proyecto en `src/` (código fuente de la aplicación) y `supabase/` (configuraciones o migraciones de base de datos).

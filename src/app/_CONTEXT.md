@@ -1,23 +1,20 @@
 # 📁 src/app
 
 ## Propósito
-Este directorio es el núcleo del enrutamiento de la aplicación (App Router de Next.js), conteniendo la página de inicio (dashboard), el layout principal envolvente para toda la plataforma y las configuraciones de estilos globales.
+Directorio raíz de la aplicación Next.js (App Router). Contiene el layout global, la configuración de estilos base y el panel de control principal (Dashboard) del sistema de gestión de logística internacional.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `globals.css` | Define los estilos globales, importaciones de Tailwind CSS y las variables de diseño de colores principales (background, foreground). |
-| `layout.js` | Define el esqueleto visual (HTML/Body) y el diseño estructural de la app. Implementa verificación de sesión del lado del servidor para conditionally renderizar componentes de navegación (Sidebar y Header). |
-| `page.js` | Renderiza el Dashboard principal de la aplicación. Muestra tarjetas con métricas operativas (contenedores activos, clientes, en tránsito) y un panel para próximos arribos. |
+| `globals.css` | Define las variables CSS globales y la integración base con Tailwind CSS para el tema claro/oscuro. |
+| `layout.js` | Layout principal de la aplicación. Maneja la estructura de la página, carga de fuentes (Inter) y renderizado condicional del Sidebar y Header basado en la autenticación del usuario vía Supabase. |
+| `page.js` | Vista del Dashboard principal que muestra tarjetas de resumen (Contenedores Activos, Clientes, En Tránsito) y próximos arribos. |
 
 ## Relaciones
-- **Usa**: 
-  - Componentes de UI internos: `@/components/layout/Sidebar`, `@/components/layout/Header`.
-  - Servicios internos: `@/lib/supabase/server` para autenticación y base de datos.
-  - Librerías externas: `lucide-react` (iconos), `next/font/google` (tipografía Inter).
-- **Usado por**: Next.js (Punto de entrada automático para el ruteo de la aplicación).
+- **Usa**: `@/components/layout/Sidebar`, `@/components/layout/Header`, `@/lib/supabase/server`, `next/font/google`, `lucide-react`, `tailwindcss`.
+- **Usado por**: Next.js App Router (Punto de entrada de la UI).
 
 ## Detalles clave
-- **Ruteo Condicional por Sesión**: El `layout.js` verifica la autenticación del usuario (`supabase.auth.getUser()`) antes de cargar el Sidebar y el Header. Esto permite que la página de login tenga un diseño limpio mientras que el resto de la app mantiene la estructura de administración.
-- **Dashboard Modular**: La vista principal (`page.js`) está estructurada mediante un sistema de grillas (`grid-cols-3`) que presenta un resumen rápido (KPIs) de las entidades más importantes del sistema logístico.
-- **Subrutas Delegadas**: El enrutamiento de funcionalidades específicas (contenedores, clientes, calculadora, etiquetas, histórico, login) se delega a los subdirectorios, manteniendo la raíz limpia y enfocada en la vista general.
+- **Autenticación en Layout**: `layout.js` verifica el estado de la sesión usando Supabase Server Client. Si el usuario no está autenticado, renderiza solo el contenido (útil para la página de login); si lo está, envuelve el contenido con la navegación principal (`Sidebar` y `Header`).
+- **Dashboard Estático**: Actualmente `page.js` presenta una estructura de panel de control con valores en cero (placeholders) que requerirán integración con datos reales de la base de datos.
+- **Enrutamiento basado en carpetas**: Contiene subdirectorios que definen las distintas rutas de la aplicación como contenedores, clientes, histórico, login y utilidades como la calculadora volumétrica.

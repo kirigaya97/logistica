@@ -20,8 +20,8 @@ export async function importPackingList(containerId, fileName, items) {
     }
 
     // Create new packing list
-    const totalWeight = items.reduce((sum, i) => sum + (i.weight_kg || 0), 0)
-    const totalVolume = items.reduce((sum, i) => sum + (i.volume_m3 || 0), 0)
+    const totalWeight = items.reduce((sum, i) => sum + (parseFloat(i.weight_kg) || 0), 0)
+    const totalVolume = items.reduce((sum, i) => sum + (parseFloat(i.volume_m3) || 0), 0)
 
     const { data: pl, error: plError } = await supabase
         .from('packing_lists')
@@ -83,4 +83,75 @@ export async function deletePackingListItem(itemId, containerId) {
 
     if (error) throw new Error(`Error al eliminar item: ${error.message}`)
     revalidatePath(`/contenedores/${containerId}/packing-list`)
+}
+
+// --- Clasificación: cliente + etiquetas ---
+
+export async function assignClientToItems(itemIds, clientId) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('packing_list_items')
+        .update({ client_id: clientId || null })
+        .in('id', itemIds)
+
+    if (error) throw new Error(`Error al asignar cliente: ${error.message}`)
+}
+
+export async function addTagToItems(itemIds, tagId) {
+    const supabase = await createClient()
+
+    const rows = itemIds.map(itemId => ({
+        item_id: itemId,
+        tag_id: tagId,
+    }))
+
+    // Use upsert to avoid duplicate errors
+    const { error } = await supabase
+        .from('item_tags')
+        .upsert(rows, { onConflict: 'item_id,tag_id' })
+
+    if (error) throw new Error(`Error al asignar etiqueta: ${error.message}`)
+}
+
+export async function removeTagFromItem(itemId, tagId) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('item_tags')
+        .delete()
+        .eq('item_id', itemId)
+        .eq('tag_id', tagId)
+
+    if (error) throw new Error(`Error al quitar etiqueta: ${error.message}`)
+}
+
+export async function getItemsWithClassification(containerId) {
+    const supabase = await createClient()
+
+    const { data: packingList } = await supabase
+        .from('packing_lists')
+        .select('id')
+        .eq('container_id', containerId)
+        .single()
+
+    if (!packingList) return []
+
+    const { data: items } = await supabase
+        .from('packing_list_items')
+        .select(`
+      *,
+      clients(id, name),
+      item_tags(
+        tags(id, name, color)
+      )
+    `)
+        .eq('packing_list_id', packingList.id)
+        .order('sort_order')
+
+    return (items || []).map(item => ({
+        ...item,
+        client: item.clients || null,
+        tags: item.item_tags?.map(it => it.tags) || [],
+    }))
 }

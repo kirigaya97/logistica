@@ -1,18 +1,18 @@
 # 📁 src/app/calculadora-volumetrica
 
 ## Propósito
-Este directorio aloja el módulo de la Calculadora Volumétrica, una herramienta destinada al cálculo de volúmenes para operaciones de logística internacional. En su estado actual, sirve como un marcador de posición (placeholder) en la aplicación para una funcionalidad futura.
+Este directorio contiene la página de la Calculadora Volumétrica de la aplicación. Su objetivo es proporcionar una interfaz para que los usuarios puedan calcular cuántas cajas de un tamaño específico caben dentro de un contenedor de carga.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Componente de página de Next.js que define la ruta `/calculadora-volumetrica` y muestra temporalmente el mensaje "Módulo en construcción". |
+| `page.js` | Componente de página de Next.js que renderiza la vista principal de la herramienta e instancia el componente interactivo de la calculadora. |
 
 ## Relaciones
-- **Usa**: Ninguno (actualmente no importa componentes ni librerías externas).
-- **Usado por**: Sistema de enrutamiento de Next.js (App Router) para exponer la URL `/calculadora-volumetrica` a los usuarios.
+- **Usa**: `@/components/calculadora/VolumetricCalc`
+- **Usado por**: Next.js App Router (Sistema de enrutamiento principal, accesible vía `/calculadora-volumetrica`).
 
 ## Detalles clave
-- El desarrollo de este módulo se encuentra en su fase inicial o pendiente.
-- Emplea clases utilitarias de Tailwind CSS para aplicar estilos básicos (tamaño de fuente, colores y márgenes).
-- Sigue la convención de Next.js App Router utilizando `page.js` para definir la interfaz de la ruta.
+- Sirve como un contenedor de presentación estructurado para la herramienta de cálculo volumétrico.
+- Delega la interactividad y la lógica de cálculo principal al componente importado `VolumetricCalc`.
+- Utiliza clases de Tailwind CSS (`max-w-3xl`, `text-2xl`, `text-gray-500`) para el diseño responsivo y el estilo de la cabecera.

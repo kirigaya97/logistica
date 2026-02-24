@@ -1,19 +1,23 @@
-# 📦 src/components/contenedores
+Generaré el archivo `_CONTEXT.md` para el directorio de componentes de contenedores siguiendo el formato solicitado.
+
+# 📁 src/components/contenedores
 
 ## Propósito
-Contiene los componentes de interfaz de usuario (UI) específicos para la presentación visual y el filtrado del listado de contenedores de logística internacional.
+Este directorio contiene los componentes de interfaz de usuario especializados para la visualización, filtrado y gestión de contenedores de logística internacional en el dashboard.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| ContainerCard.js | Tarjeta individual que muestra un resumen visual de un contenedor (código, estado, origen, tipo, ETA) y actúa como enlace a su vista de detalle. |
-| ContainerFilters.js | Componente de cliente que renderiza controles desplegables para filtrar la lista de contenedores por estado y almacén de origen, actualizando los parámetros de la URL. |
+| ContainerCard.js | Tarjeta informativa que resume los datos clave de un contenedor (código, origen, tipo, ETA) y vincula a su detalle. |
+| ContainerFilters.js | Panel de filtros interactivos para segmentar la lista de contenedores por estado y almacén de origen mediante parámetros de URL. |
+| DeleteContainerButton.js | Botón de acción con confirmación nativa para la eliminación lógica o física de un contenedor y sus datos relacionados. |
 
 ## Relaciones
-- **Usa**: `@/components/ui/StatusBadge`, `@/lib/constants` (`WAREHOUSES`, `CONTAINER_STATES`), `next/link`, `next/navigation` (`useRouter`, `useSearchParams`), `lucide-react`.
-- **Usado por**: Principalmente por las vistas dentro de `src/app/contenedores/` (ej. la página principal de listado).
+- **Usa**: `next/link`, `next/navigation`, `@/components/ui/StatusBadge`, `@/lib/constants` (WAREHOUSES, CONTAINER_STATES), `lucide-react`.
+- **Usado por**: Principalmente por las vistas en `src/app/contenedores/` (listado y páginas de detalle).
 
 ## Detalles clave
-- `ContainerFilters.js` utiliza el patrón de URL como estado (mediante `useSearchParams` y `useRouter`), permitiendo que los filtros se puedan compartir y mantener al recargar la página. Es un Client Component.
-- `ContainerCard.js` formatea localmente las fechas de llegada estimada (ETA) utilizando el formato `es-AR`.
-- El diseño y la lógica están fuertemente acoplados a las constantes del negocio definidas en `@/lib/constants`, asegurando consistencia en la visualización de banderas, etiquetas de almacenes y estados.
+- **Navegación**: Utiliza `next/link` para transiciones rápidas entre el listado y el detalle de cada unidad.
+- **Estado Global vía URL**: `ContainerFilters` sincroniza el estado de la interfaz con la query string de la URL, permitiendo compartir búsquedas filtradas.
+- **UI Consistente**: Depende de constantes centralizadas (`WAREHOUSES`, `CONTAINER_STATES`) para asegurar que las etiquetas y banderas coincidan en toda la aplicación.
+- **Seguridad de Acción**: El botón de eliminación implementa una barrera de confirmación para prevenir borrados accidentales de registros críticos.

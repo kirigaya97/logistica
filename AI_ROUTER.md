@@ -23,18 +23,33 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 
 | Directorio | Archivos | Contexto |
 |---|---|---|
+| `src/app/api/exchange-rate/` | 1 | [→ _CONTEXT.md](src/app/api/exchange-rate/_CONTEXT.md) |
 | `src/app/calculadora-volumetrica/` | 1 | [→ _CONTEXT.md](src/app/calculadora-volumetrica/_CONTEXT.md) |
-| `src/app/clientes/` | 1 | [→ _CONTEXT.md](src/app/clientes/_CONTEXT.md) |
-| `src/app/contenedores/` | 1 | [→ _CONTEXT.md](src/app/contenedores/_CONTEXT.md) |
-| `src/app/etiquetas/` | 1 | [→ _CONTEXT.md](src/app/etiquetas/_CONTEXT.md) |
+| `src/app/clientes/nuevo/` | 1 | [→ _CONTEXT.md](src/app/clientes/nuevo/_CONTEXT.md) |
+| `src/app/clientes/[id]/` | 1 | [→ _CONTEXT.md](src/app/clientes/[id]/_CONTEXT.md) |
+| `src/app/clientes/` | 2 | [→ _CONTEXT.md](src/app/clientes/_CONTEXT.md) |
+| `src/app/contenedores/nuevo/` | 1 | [→ _CONTEXT.md](src/app/contenedores/nuevo/_CONTEXT.md) |
+| `src/app/contenedores/[id]/costos/` | 2 | [→ _CONTEXT.md](src/app/contenedores/[id]/costos/_CONTEXT.md) |
+| `src/app/contenedores/[id]/packing-list/` | 2 | [→ _CONTEXT.md](src/app/contenedores/[id]/packing-list/_CONTEXT.md) |
+| `src/app/contenedores/[id]/` | 1 | [→ _CONTEXT.md](src/app/contenedores/[id]/_CONTEXT.md) |
+| `src/app/contenedores/` | 2 | [→ _CONTEXT.md](src/app/contenedores/_CONTEXT.md) |
+| `src/app/etiquetas/` | 2 | [→ _CONTEXT.md](src/app/etiquetas/_CONTEXT.md) |
 | `src/app/historico/` | 1 | [→ _CONTEXT.md](src/app/historico/_CONTEXT.md) |
 | `src/app/login/` | 1 | [→ _CONTEXT.md](src/app/login/_CONTEXT.md) |
 | `src/app/` | 3 | [→ _CONTEXT.md](src/app/_CONTEXT.md) |
+| `src/components/calculadora/` | 3 | [→ _CONTEXT.md](src/components/calculadora/_CONTEXT.md) |
+| `src/components/clientes/` | 2 | [→ _CONTEXT.md](src/components/clientes/_CONTEXT.md) |
+| `src/components/contenedores/` | 3 | [→ _CONTEXT.md](src/components/contenedores/_CONTEXT.md) |
 | `src/components/layout/` | 2 | [→ _CONTEXT.md](src/components/layout/_CONTEXT.md) |
+| `src/components/packing-list/` | 4 | [→ _CONTEXT.md](src/components/packing-list/_CONTEXT.md) |
+| `src/components/ui/` | 3 | [→ _CONTEXT.md](src/components/ui/_CONTEXT.md) |
+| `src/hooks/` | 1 | [→ _CONTEXT.md](src/hooks/_CONTEXT.md) |
+| `src/lib/calculadora/` | 3 | [→ _CONTEXT.md](src/lib/calculadora/_CONTEXT.md) |
+| `src/lib/excel/` | 1 | [→ _CONTEXT.md](src/lib/excel/_CONTEXT.md) |
 | `src/lib/supabase/` | 2 | [→ _CONTEXT.md](src/lib/supabase/_CONTEXT.md) |
 | `src/lib/` | 1 | [→ _CONTEXT.md](src/lib/_CONTEXT.md) |
 | `src/` | 1 | [→ _CONTEXT.md](src/_CONTEXT.md) |
-| `supabase/migrations/` | 1 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
+| `supabase/migrations/` | 6 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
 | `./` | 3 | [→ _CONTEXT.md](./_CONTEXT.md) |
 
 ## Documentación
