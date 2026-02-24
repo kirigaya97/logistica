@@ -4,7 +4,7 @@ import StatusBadge from '@/components/ui/StatusBadge'
 import { WAREHOUSES, CONTAINER_TYPES, CONTAINER_STATES } from '@/lib/constants'
 import { updateContainerStatus, deleteContainer } from '@/app/contenedores/actions'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, MapPin, Box } from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin, Box, DollarSign } from 'lucide-react'
 
 const STATE_ORDER = ['deposito', 'transito', 'aduana', 'finalizado']
 
@@ -78,6 +78,12 @@ export default async function ContainerDetailPage({ params }) {
                             </button>
                         </form>
                     )}
+                    <Link
+                        href={`/contenedores/${id}/costos`}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium flex items-center gap-2"
+                    >
+                        <DollarSign className="w-4 h-4" /> Calculadora de Costos
+                    </Link>
                     <form action={deleteWithId}>
                         <button type="submit" className="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
                             Eliminar
