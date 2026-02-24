@@ -7,13 +7,16 @@ Este directorio contiene los scripts SQL de migración que definen la estructura
 | Archivo | Descripción |
 |---|---|
 | 001_profiles.sql | Define la tabla de perfiles que extiende los datos de autenticación, establece políticas de seguridad y automatiza la creación de perfiles mediante triggers. |
+| 002_containers.sql | Define la tabla de contenedores con estados, tipos, depósitos de origen, fechas ETD/ETA, tipo de cambio y trigger para `updated_at`. |
+| 003_exchange_rates.sql | Tabla de registro histórico de tipos de cambio (blue, oficial, bolsa, CCL) con RLS habilitado. |
+| 004_cost_calculations.sql | Tablas `cost_calculations` y `cost_items` para la calculadora de costos de importación con matriz dinámica y overrides de cliente. |
 
 ## Relaciones
 - **Usa**: Esquema de autenticación nativo de Supabase (`auth.users`).
-- **Usado por**: Los clientes de Supabase en el servidor y cliente de la aplicación para gestionar la identidad y permisos de los usuarios.
+- **Usado por**: Los clientes de Supabase en el servidor y cliente de la aplicación para gestionar la identidad, permisos, contenedores, costos y tipos de cambio.
 
 ## Detalles clave
 - **Extensión de Auth**: Utiliza una tabla vinculada a `auth.users` para almacenar metadatos adicionales como el nombre completo y el rol del usuario.
-- **Seguridad (RLS)**: Implementa políticas estrictas donde los usuarios solo pueden ver y editar su propio perfil basado en su `auth.uid()`.
-- **Automatización**: Incluye una función y un trigger (`handle_new_user`) para garantizar que cada nuevo registro en la plataforma genere automáticamente su entrada correspondiente en la tabla de perfiles.
-- **Roles**: Define un rol por defecto de 'operator' para los nuevos usuarios, facilitando el control de acceso inicial.
+- **Seguridad (RLS)**: Todas las tablas tienen Row Level Security habilitado con políticas de acceso para usuarios autenticados.
+- **Automatización**: Incluye funciones y triggers para crear perfiles automáticamente y actualizar timestamps (`updated_at`).
+- **Relaciones**: `cost_calculations` referencia `containers`, `cost_items` referencia `cost_calculations` con CASCADE en DELETE.

@@ -795,25 +795,21 @@ Implementar en el Server Action de creación:
 
 ---
 
-## F3.1 — Calculadora de Costos
+## F3.1 — Calculadora de Costos ✅ COMPLETADO
 
-**Skills a leer antes**: `.agents/skills/cost-calculator/SKILL.md`  
-**Prerequisito**: F2.3 completado
+> Implementado según `docs/f3_plan.md` (F3.2 en ese plan).
+> Migración aplicada como `004_cost_calculations.sql` (no 005 como en el plan original).
 
-### Resumen de archivos a crear:
+### Archivos creados:
 
 | Archivo | Tipo |
 |---|---|
-| `supabase/migrations/005_cost_calculations.sql` | Migración: `cost_calculations`, `cost_items` |
+| `supabase/migrations/004_cost_calculations.sql` | Migración: `cost_calculations`, `cost_items` |
 | `src/lib/calculadora/engine.js` | Lógica pura de cálculo |
-| `src/lib/calculadora/defaults.js` | Matriz default (copiar de SKILL.md) |
-| `src/hooks/useCostCalculator.js` | Estado reactivo del calculador |
+| `src/lib/calculadora/defaults.js` | Matriz default |
 | `src/app/contenedores/[id]/costos/page.js` | Página de costos |
 | `src/app/contenedores/[id]/costos/actions.js` | Server Actions |
-| `src/components/calculadora/CostMatrix.js` | Matriz dinámica |
-| `src/components/calculadora/CostRow.js` | Fila toggle-able |
-| `src/components/calculadora/CostOutput.js` | Salida real |
-| `src/components/calculadora/CostOutputClient.js` | Salida cliente |
+| `src/components/calculadora/CostMatrix.js` | Matriz dinámica con toggle y resumen integrado |
 
 ### Reglas del engine:
 ```
@@ -826,22 +822,21 @@ Implementar en el Server Action de creación:
 
 ---
 
-## F3.2 — Volumétrica + Tipo de Cambio
+## F3.2 — Volumétrica + Tipo de Cambio ✅ COMPLETADO
 
-**Skills a leer antes**: `.agents/skills/exchange-rate/SKILL.md`  
-**Prerequisito**: F2.1 completado (independiente de F3.1)
+> Implementado según `docs/f3_plan.md` (F3.1 en ese plan).
+> Migración aplicada como `003_exchange_rates.sql` (no 006 como en el plan original).
 
-### Resumen de archivos a crear:
+### Archivos creados:
 
 | Archivo | Tipo |
 |---|---|
-| `supabase/migrations/006_exchange_rates.sql` | Migración: `exchange_rates` |
+| `supabase/migrations/003_exchange_rates.sql` | Migración: `exchange_rates` |
 | `src/lib/calculadora/volumetric.js` | Lógica de cálculo |
-| `src/lib/exchange-rate.js` | Fetch a DolarAPI.com |
 | `src/hooks/useExchangeRate.js` | Hook para rates |
-| `src/app/calculadora-volumetrica/page.js` | REEMPLAZAR placeholder |
-| `src/app/api/exchange-rate/route.js` | API proxy |
-| `src/components/calculadora/VolumetricCalc.js` | Componente UI |
+| `src/app/calculadora-volumetrica/page.js` | Página reemplazada con calculadora funcional |
+| `src/app/api/exchange-rate/route.js` | API proxy para DolarAPI.com |
+| `src/components/calculadora/VolumetricCalc.js` | Componente UI completo |
 | `src/components/calculadora/ExchangeRateSelector.js` | Selector de tipo de dólar |
 
 ### Fórmula volumétrica:
