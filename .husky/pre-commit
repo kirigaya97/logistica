@@ -1,0 +1,2 @@
+node scripts/map-context.mjs
+git add "*/_CONTEXT.md" "AI_ROUTER.md" 2>/dev/null || true
