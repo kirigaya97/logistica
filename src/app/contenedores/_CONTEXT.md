@@ -1,20 +1,22 @@
-# 📁 src/app/contenedores
+# 📦 src/app/contenedores
 
 ## Propósito
-Este directorio maneja la ruta principal y las operaciones de servidor para la gestión de contenedores logísticos. Permite listar, filtrar, crear, actualizar el estado y eliminar los contenedores del sistema.
+Este directorio contiene la página principal y las acciones de servidor para la gestión del listado de contenedores logísticos. Permite visualizar, filtrar, exportar y administrar el estado general de los contenedores en el sistema.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `actions.js` | Define las Server Actions para interactuar con Supabase (crear, actualizar estado, eliminar), incluyendo validación de datos y la lógica para la generación automática de códigos únicos. |
-| `page.js` | Componente de servidor (Server Component) que renderiza la vista principal. Se encarga de obtener los contenedores desde la base de datos, aplicar filtros según los parámetros de búsqueda y mostrar la cuadrícula de resultados. |
+| `actions.js` | Acciones de servidor (Server Actions) para crear, actualizar, eliminar y cambiar el estado de los contenedores, incluyendo la lógica de generación automática de códigos secuenciales. |
+| `page.js` | Página principal (Server Component) que consulta y muestra el listado de contenedores, integrando filtros por URL, opciones de exportación y navegación hacia la creación de nuevos registros. |
+| `nuevo/` | (Subdirectorio) Contiene la ruta y vista para la creación de un nuevo contenedor. |
+| `[id]/` | (Subdirectorio) Contiene la ruta dinámica y vistas de detalle para un contenedor individual. |
 
 ## Relaciones
-- **Usa**: `@/lib/supabase/server` para la conexión a la base de datos, `@/components/contenedores` para componentes de interfaz (`ContainerCard`, `ContainerFilters`), `zod` para validación de esquemas, y utilidades de Next.js (`next/cache`, `next/navigation`).
-- **Usado por**: El App Router de Next.js como la ruta `/contenedores`.
+- **Usa**: `@/lib/supabase/server` (Conexión a base de datos), `next/cache` y `next/navigation` (Manejo de caché y ruteo de Next.js), `zod` (Validación de esquemas), `@/components/contenedores/` (Componentes específicos de UI como `ContainerCard` y `ContainerFilters`), `@/components/ui/` (Componentes compartidos como `ExportButton`), `lucide-react` (Iconos).
+- **Usado por**: Ruteo principal de Next.js (punto de entrada para la URL `/contenedores`).
 
 ## Detalles clave
-- **Generación de códigos**: Al crear un nuevo contenedor, se genera automáticamente un código correlativo con el formato `[ORIGEN]-[AÑO]-[SECUENCIA]` (ej. `HK-2024-001`).
-- **Validación de datos**: Se utiliza `zod` en las acciones de servidor para validar estrictamente los datos del formulario antes de insertarlos en la base de datos.
-- **Obtención de datos en servidor**: `page.js` realiza las consultas a Supabase directamente en el servidor, utilizando `searchParams` para aplicar filtros dinámicos (estado, origen).
-- **Revalidación de caché**: Las acciones que mutan datos (`createContainer`, `updateContainerStatus`, `deleteContainer`) utilizan `revalidatePath` para asegurar que la interfaz de usuario refleje los cambios inmediatamente.
+- **Generación automática de códigos**: La función `generateCode` en `actions.js` crea un identificador único y secuencial para cada nuevo contenedor basándose en su origen y el año actual (por ejemplo: `HK-2024-001`).
+- **Filtrado Server-Side**: Los filtros por estado y origen se aplican directamente en la consulta a Supabase mediante la lectura de `searchParams` en `page.js`, optimizando la carga de datos.
+- **Mutaciones optimizadas**: Las acciones de servidor utilizan `revalidatePath` para refrescar la caché de Next.js inmediatamente después de crear, actualizar o eliminar un contenedor, garantizando que la interfaz siempre muestre información actualizada.
+- **Validación de datos**: Se utiliza `zod` en el backend (`actions.js`) para asegurar que los datos enviados desde los formularios cumplen con la estructura y los tipos esperados (origen, tipo de contenedor, etc.) antes de interactuar con la base de datos.

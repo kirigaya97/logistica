@@ -7,9 +7,12 @@ import {
     assignClientToItems,
     addTagToItems,
     removeTagFromItem,
+    addManualItem,
+    deletePackingListItem,
 } from '@/app/contenedores/[id]/packing-list/actions'
 import { getClients } from '@/app/clientes/actions'
-import { Users, Tags, CheckSquare, Square, Loader2, X } from 'lucide-react'
+import { Users, Tags, CheckSquare, Square, Loader2, X, Plus, Trash2, FileSpreadsheet } from 'lucide-react'
+import ExportButton from '@/components/ui/ExportButton'
 
 export default function ItemClassifier({ items, containerId }) {
     const [selectedItems, setSelectedItems] = useState([])
@@ -21,17 +24,39 @@ export default function ItemClassifier({ items, containerId }) {
         getClients().then(setClients)
     }, [])
 
+    const [lastSelectedIndex, setLastSelectedIndex] = useState(null)
+    const [adding, setAdding] = useState(false)
+    const [newItem, setNewItem] = useState({ name: '', quantity: 1, weight_kg: '', volume_m3: '' })
+
     const allSelected = items.length > 0 && selectedItems.length === items.length
     const someSelected = selectedItems.length > 0
 
-    function toggleItem(id) {
-        setSelectedItems(prev =>
-            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-        )
+    function toggleItem(id, index, event = null) {
+        if (event?.shiftKey && lastSelectedIndex !== null) {
+            const start = Math.min(index, lastSelectedIndex)
+            const end = Math.max(index, lastSelectedIndex)
+            const rangeIds = items.slice(start, end + 1).map(i => i.id)
+
+            setSelectedItems(prev => {
+                const combined = new Set([...prev, ...rangeIds])
+                return Array.from(combined)
+            })
+        } else {
+            setSelectedItems(prev =>
+                prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+            )
+        }
+        setLastSelectedIndex(index)
     }
 
     function toggleAll() {
-        setSelectedItems(allSelected ? [] : items.map(i => i.id))
+        if (allSelected) {
+            setSelectedItems([])
+            setLastSelectedIndex(null)
+        } else {
+            setSelectedItems(items.map(i => i.id))
+            setLastSelectedIndex(items.length - 1)
+        }
     }
 
     async function handleAssignClient(clientId) {
@@ -54,6 +79,31 @@ export default function ItemClassifier({ items, containerId }) {
         setLoading(true)
         await removeTagFromItem(itemId, tag.id)
         router.refresh()
+        setLoading(false)
+    }
+
+    async function handleAddItem() {
+        if (!newItem.name) return
+        setLoading(true)
+        try {
+            await addManualItem(containerId, newItem)
+            setNewItem({ name: '', quantity: 1, weight_kg: '', volume_m3: '' })
+            setAdding(false)
+        } catch (e) {
+            alert(e.message)
+        }
+        setLoading(false)
+    }
+
+    async function handleDeleteItem(id) {
+        if (!window.confirm('¿Eliminar este item del packing list?')) return
+        setLoading(true)
+        try {
+            await deletePackingListItem(id, containerId)
+            setSelectedItems(prev => prev.filter(x => x !== id))
+        } catch (e) {
+            alert(e.message)
+        }
         setLoading(false)
     }
 
@@ -114,8 +164,9 @@ export default function ItemClassifier({ items, containerId }) {
                                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Cant.</th>
                                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Peso (kg)</th>
                                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Vol (m³)</th>
-                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase min-w-[120px]">Cliente</th>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Etiquetas</th>
+                                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase w-10"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -126,12 +177,18 @@ export default function ItemClassifier({ items, containerId }) {
                                         }`}
                                 >
                                     <td className="px-4 py-3">
-                                        <button type="button" onClick={() => toggleItem(item.id)} className="text-gray-400 hover:text-gray-600">
+                                        <button
+                                            type="button"
+                                            onClick={(e) => toggleItem(item.id, idx, e)}
+                                            className="text-gray-400 hover:text-gray-600"
+                                        >
                                             {selectedItems.includes(item.id) ? <CheckSquare className="w-4 h-4 text-blue-600" /> : <Square className="w-4 h-4" />}
                                         </button>
                                     </td>
                                     <td className="px-4 py-3 text-gray-400">{idx + 1}</td>
-                                    <td className="px-4 py-3 text-gray-800 font-medium">{item.name}</td>
+                                    <td className="px-4 py-3 text-gray-800 font-medium max-w-[180px] truncate" title={item.name}>
+                                        {item.name}
+                                    </td>
                                     <td className="px-4 py-3 text-right">{item.quantity}</td>
                                     <td className="px-4 py-3 text-right">{item.weight_kg ?? '—'}</td>
                                     <td className="px-4 py-3 text-right">{item.volume_m3 ?? '—'}</td>
@@ -163,8 +220,102 @@ export default function ItemClassifier({ items, containerId }) {
                                             )) || <span className="text-xs text-gray-300">—</span>}
                                         </div>
                                     </td>
+                                    <td className="px-4 py-3 text-right">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDeleteItem(item.id)}
+                                            className="text-gray-400 hover:text-red-600 transition-colors"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
+                            {/* Inline Manual Form */}
+                            {adding ? (
+                                <tr className="bg-gray-50">
+                                    <td className="px-4 py-3 text-center">
+                                        <Plus className="w-4 h-4 text-blue-500 mx-auto" />
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-400">+</td>
+                                    <td className="px-4 py-3">
+                                        <input
+                                            type="text"
+                                            placeholder="Nombre..."
+                                            value={newItem.name}
+                                            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                                            className="w-full px-2 py-1 border rounded text-xs"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <input
+                                            type="number"
+                                            value={newItem.quantity}
+                                            onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                                            className="w-16 px-2 py-1 border rounded text-right text-xs ml-auto block"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="Peso"
+                                            value={newItem.weight_kg}
+                                            onChange={(e) => setNewItem({ ...newItem, weight_kg: e.target.value })}
+                                            className="w-20 px-2 py-1 border rounded text-right text-xs ml-auto block"
+                                        />
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <input
+                                            type="number"
+                                            step="0.001"
+                                            placeholder="Vol"
+                                            value={newItem.volume_m3}
+                                            onChange={(e) => setNewItem({ ...newItem, volume_m3: e.target.value })}
+                                            className="w-20 px-2 py-1 border rounded text-right text-xs ml-auto block"
+                                        />
+                                    </td>
+                                    <td colSpan="2" className="px-4 py-3">
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={handleAddItem}
+                                                disabled={loading}
+                                                className="bg-blue-600 text-white px-3 py-1 rounded text-xs"
+                                            >
+                                                Agregar
+                                            </button>
+                                            <button
+                                                onClick={() => setAdding(false)}
+                                                className="bg-gray-200 text-gray-600 px-3 py-1 rounded text-xs"
+                                            >
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <td colSpan="9" className="p-0">
+                                        <div className="flex gap-2 justify-center py-3">
+                                            <ExportButton
+                                                data={items}
+                                                type="packing_list"
+                                                filename={`packing_list_${containerId}`}
+                                                variant="outline"
+                                                label="Exportar"
+                                            />
+                                            <button
+                                                onClick={() => setAdding(true)}
+                                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                                            >
+                                                <Plus className="w-4 h-4" />
+                                                Agregar Manual
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

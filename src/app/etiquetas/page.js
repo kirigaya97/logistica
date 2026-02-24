@@ -27,6 +27,7 @@ export default async function EtiquetasPage() {
                             <tr className="bg-gray-50 border-b border-gray-200">
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Etiqueta</th>
                                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Items</th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contenedores</th>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Creada</th>
                                 <th className="px-4 py-3 w-10"></th>
                             </tr>
@@ -48,7 +49,20 @@ export default async function EtiquetasPage() {
                                                 {tag.item_count}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-gray-500">
+                                        <td className="px-4 py-3">
+                                            <div className="flex flex-wrap gap-1">
+                                                {tag.containers?.length > 0 ? (
+                                                    tag.containers.map(code => (
+                                                        <span key={code} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-md border border-gray-200">
+                                                            {code}
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <span className="text-xs text-gray-300">—</span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-500 text-xs">
                                             {new Date(tag.created_at).toLocaleDateString('es-AR')}
                                         </td>
                                         <td className="px-4 py-3">

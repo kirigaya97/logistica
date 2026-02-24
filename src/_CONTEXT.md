@@ -1,19 +1,19 @@
 # 📁 src
 
 ## Propósito
-Directorio principal del código fuente de la aplicación Next.js. Contiene la lógica central de la plataforma de logística internacional, incluyendo el enrutamiento, componentes de la interfaz de usuario, hooks personalizados, utilidades y la configuración de middleware para la gestión de acceso.
+Directorio principal del código fuente de la aplicación Next.js, encargado de centralizar la estructura de rutas, componentes de interfaz de usuario, hooks personalizados y lógica de negocio para la plataforma de logística internacional.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `middleware.js` | Middleware de enrutamiento que gestiona la autenticación de usuarios mediante Supabase. Intercepta las solicitudes, verifica la sesión del usuario a través de cookies y aplica redirecciones protectoras (e.g., hacia `/login` si no está autenticado, o hacia la raíz si ya lo está y busca acceder a `/login`). |
+| middleware.js | Intercepta las peticiones de Next.js utilizando Supabase para verificar la autenticación del usuario y gestionar las redirecciones entre la página de acceso y las rutas protegidas. |
 
 ## Relaciones
-- **Usa**: `@supabase/ssr` (para la creación del cliente de servidor y manejo de sesiones), `next/server` (para control de respuestas HTTP y redirecciones de enrutamiento).
-- **Usado por**: Next.js (el framework ejecuta automáticamente este archivo en las solicitudes entrantes que coinciden con su configuración de rutas).
+- **Usa**: @supabase/ssr, next/server
+- **Usado por**: Entorno de ejecución de Next.js
 
 ## Detalles clave
-- **Seguridad perimetral**: El `middleware.js` actúa como una barrera de seguridad garantizando que solo los usuarios autenticados puedan acceder a las rutas protegidas de la aplicación.
-- **Sincronización de sesión**: Refresca y gestiona automáticamente las cookies de sesión de Supabase durante la evaluación de la solicitud.
-- **Optimización de rendimiento**: La configuración del `matcher` excluye explícitamente rutas de activos estáticos (como imágenes y scripts internos de Next) y llamadas a la API para evitar ejecuciones innecesarias del middleware y mejorar los tiempos de respuesta.
-- **Arquitectura basada en subdirectorios**: El código está organizado funcionalmente delegando la lógica de vistas a `app/`, elementos reutilizables a `components/`, lógica de estado a `hooks/` y funciones de servicio a `lib/`.
+- Sincroniza las cookies de sesión de Supabase con la respuesta del servidor para mantener el estado de autenticación.
+- Bloquea el acceso a rutas protegidas para usuarios no logueados, redirigiéndolos obligatoriamente a `/login`.
+- Evita que usuarios ya autenticados vuelvan a acceder a la pantalla de `/login`, enviándolos a la raíz de la aplicación.
+- Optimiza el rendimiento excluyendo del análisis del middleware a los archivos estáticos, imágenes y rutas de API mediante una expresión regular en su configuración.

@@ -48,24 +48,55 @@ export default async function ClientDetailPage({ params, searchParams }) {
                 </div>
             </div>
 
-            {/* Info cards */}
-            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-xs text-gray-500 mb-1">Tarifa Internacional</p>
-                        <p className="font-medium">
-                            {client.international_rate ? `USD ${client.international_rate}` : '—'}
-                        </p>
+            {/* Info and Stats cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm h-fit">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-4">Tarifas y Datos</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                        <div className="bg-gray-50 rounded-lg p-4">
+                            <p className="text-xs text-gray-500 mb-1">Tarifa Internacional</p>
+                            <p className="text-lg font-bold text-blue-700">
+                                {client.international_rate ? `USD ${client.international_rate}` : '—'}
+                            </p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4">
+                            <p className="text-xs text-gray-500 mb-1">Tarifa Local</p>
+                            <p className="text-lg font-bold text-blue-700">
+                                {client.local_rate ? `ARS ${client.local_rate}` : '—'}
+                            </p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4">
+                            <p className="text-xs text-gray-500 mb-1">Notas</p>
+                            <p className="text-sm text-gray-600">{client.notes || '—'}</p>
+                        </div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                        <p className="text-xs text-gray-500 mb-1">Tarifa Local</p>
-                        <p className="font-medium">
-                            {client.local_rate ? `ARS ${client.local_rate}` : '—'}
-                        </p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-4 col-span-2">
-                        <p className="text-xs text-gray-500 mb-1">Notas</p>
-                        <p className="text-sm text-gray-600">{client.notes || '—'}</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm h-fit">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-4">Estadísticas Históricas</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-blue-50 rounded-lg p-4">
+                            <p className="text-xs text-blue-600 mb-1">Contenedores</p>
+                            <p className="text-xl font-bold text-blue-800">{client.stats?.containerCount || 0}</p>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-4">
+                            <p className="text-xs text-purple-600 mb-1">Volumen Total</p>
+                            <p className="text-xl font-bold text-purple-800">{client.stats?.totalVolume.toFixed(2)} m³</p>
+                        </div>
+                        <div className="bg-orange-50 rounded-lg p-4 col-span-2">
+                            <p className="text-xs text-orange-600 mb-2">Etiquetas Utilizadas</p>
+                            <div className="flex flex-wrap gap-1">
+                                {client.stats?.uniqueTags?.length > 0 ? (
+                                    client.stats.uniqueTags.map(tag => (
+                                        <span key={tag} className="px-2 py-0.5 bg-white border border-orange-100 rounded text-[10px] text-orange-700 font-medium">
+                                            #{tag}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span className="text-xs text-gray-400 italic">Sin etiquetas</span>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

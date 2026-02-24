@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Sidebar from '@/components/layout/Sidebar'
 import Header from '@/components/layout/Header'
+import CommandPalette from '@/components/layout/CommandPalette'
 import { createClient } from '@/lib/supabase/server'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,6 +27,7 @@ export default async function RootLayout({ children }) {
             <Sidebar />
             <div className="flex-1 ml-64">
               <Header />
+              <CommandPalette />
               <main className="p-8 bg-gray-50 min-h-[calc(100vh-4rem)]">
                 {children}
               </main>

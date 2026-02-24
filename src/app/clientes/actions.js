@@ -133,21 +133,49 @@ export async function getClientWithHistory(id) {
         .eq('client_id', id)
         .order('changed_at', { ascending: false })
 
-    // Get items assigned to this client (with packing list and container info)
-    const { data: items } = await supabase
+    // Get items assigned to this client (including tags)
+    const { data: itemData } = await supabase
         .from('packing_list_items')
         .select(`
-      id, name, quantity, weight_kg, volume_m3,
-      packing_lists!inner(
-        id, container_id,
-        containers!inner(id, code, status, origin_warehouse, eta, etd)
-      )
-    `)
+            id, name, quantity, weight_kg, volume_m3,
+            packing_lists!inner(
+                id, container_id,
+                containers!inner(id, code, status, origin_warehouse, eta, etd)
+            ),
+            item_tags(tags(id, name))
+        `)
         .eq('client_id', id)
+
+    const items = itemData || []
+
+    // Calculate stats
+    const uniqueContainers = new Set()
+    const uniqueTags = new Set()
+    let totalVolume = 0
+    let totalWeight = 0
+
+    items.forEach(item => {
+        const container = item.packing_lists?.containers
+        if (container) uniqueContainers.add(container.code)
+
+        totalVolume += parseFloat(item.volume_m3) || 0
+        totalWeight += parseFloat(item.weight_kg) || 0
+
+        item.item_tags?.forEach(it => {
+            if (it.tags) uniqueTags.add(it.tags.name)
+        })
+    })
 
     return {
         ...client,
         rate_history: rateHistory || [],
-        items: items || [],
+        items: items,
+        stats: {
+            containerCount: uniqueContainers.size,
+            uniqueContainers: Array.from(uniqueContainers),
+            totalVolume,
+            totalWeight,
+            uniqueTags: Array.from(uniqueTags)
+        }
     }
 }

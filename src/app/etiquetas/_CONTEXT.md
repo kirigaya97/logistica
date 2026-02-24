@@ -1,19 +1,20 @@
 # 🏷️ src/app/etiquetas
 
 ## Propósito
-Este módulo gestiona la visualización y administración de las etiquetas (tags) generadas al clasificar los ítems dentro de los packing lists. Provee la interfaz para listar el inventario de etiquetas y las operaciones de servidor necesarias para su gestión en la base de datos.
+Este directorio contiene la interfaz de usuario y la lógica de servidor para la administración de etiquetas (tags). Las etiquetas sirven para clasificar de manera flexible los ítems dentro de los packing lists de los contenedores logísticos.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| actions.js | Define las Server Actions para el CRUD de etiquetas, incluyendo normalización de texto, búsqueda, y consultas complejas relacionales (conteo de ítems y detalles con contenedores). |
-| page.js | Componente de página principal que renderiza una tabla con todas las etiquetas, mostrando su nombre normalizado, la cantidad de ítems que la utilizan y controles para su eliminación condicional. |
+| actions.js | Acciones de servidor (Server Actions) que manejan el CRUD de etiquetas en Supabase, incluyendo algoritmos de normalización de texto y consultas relacionales para contabilizar ítems y contenedores asociados. |
+| page.js | Componente de servidor que renderiza la vista principal de etiquetas. Muestra una tabla con el listado completo, estadísticas de uso por etiqueta y permite eliminarlas de forma segura. |
 
 ## Relaciones
-- **Usa**: Cliente de Supabase (@/lib/supabase/server), caché de Next.js (next/cache) para revalidación de rutas, e íconos de lucide-react.
-- **Usado por**: El enrutador de Next.js (como ruta /etiquetas). Las acciones de servidor (searchTags, createTag) muy probablemente sean consumidas por otros módulos interactivos como el componente de clasificación de ítems del packing list.
+- **Usa**: `@/lib/supabase/server` (Cliente de base de datos), `next/cache` (Manejo de caché de Next.js), y la librería de iconos `lucide-react`.
+- **Usado por**: El layout de navegación principal (para acceder a la ruta `/etiquetas`). Las acciones expuestas (como `searchTags` o `createTag`) muy probablemente son consumidas por los componentes de clasificación dentro de los packing lists.
 
 ## Detalles clave
-- Las etiquetas se someten a una estricta normalización antes de guardarse o buscarse (paso a minúsculas, eliminación de acentos y espacios extra) para asegurar consistencia y evitar duplicados.
-- Se implementa una regla de seguridad en la UI y base de datos: las etiquetas solo exponen el botón de eliminación si no tienen ningún ítem asociado en el sistema (item_count === 0).
-- Las consultas a la base de datos extraen información anidada profunda, permitiendo que una etiqueta conozca los ítems de packing list específicos y los contenedores a los que está vinculada.
+- **Normalización estricta**: Antes de guardar o buscar, los nombres de las etiquetas se normalizan (`normalizeTagName`) eliminando acentos, espacios múltiples y convirtiéndolos a minúsculas. Esto previene la duplicación de datos (ej. "Electrónica" y "electronica" se tratan como la misma etiqueta).
+- **Borrado seguro**: Por reglas de negocio y seguridad en la UI, una etiqueta solo puede ser eliminada si no tiene ningún ítem asociado (`item_count === 0`).
+- **Consultas profundas (Deep joins)**: La función `getTagsWithItemCount` realiza una consulta relacional compleja a través de Supabase que atraviesa `tags -> item_tags -> packing_list_items -> packing_lists -> containers` para derivar exactamente en qué contenedores se usa cada etiqueta.
+- **Mutaciones sin estado cliente**: Todo el flujo de modificación de datos (como el borrado) utiliza Server Actions combinados con `revalidatePath('/etiquetas')`, evitando la necesidad de manejar estados complejos en el cliente para mantener la tabla actualizada.

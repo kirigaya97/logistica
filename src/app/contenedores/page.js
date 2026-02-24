@@ -4,6 +4,7 @@ import ContainerFilters from '@/components/contenedores/ContainerFilters'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { Suspense } from 'react'
+import ExportButton from '@/components/ui/ExportButton'
 
 export default async function ContenedoresPage({ searchParams }) {
     const supabase = await createClient()
@@ -27,13 +28,23 @@ export default async function ContenedoresPage({ searchParams }) {
         <div>
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">Contenedores</h1>
-                <Link
-                    href="/contenedores/nuevo"
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                    <Plus className="w-4 h-4" />
-                    Nuevo Contenedor
-                </Link>
+                <div className="flex items-center gap-3">
+                    {containers && containers.length > 0 && (
+                        <ExportButton
+                            data={containers}
+                            type="containers"
+                            filename="listado_contenedores"
+                            variant="outline"
+                        />
+                    )}
+                    <Link
+                        href="/contenedores/nuevo"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Nuevo
+                    </Link>
+                </div>
             </div>
 
             <Suspense fallback={<div>Cargando filtros...</div>}>

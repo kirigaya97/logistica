@@ -79,13 +79,32 @@ export async function getTagsWithItemCount() {
 
     const { data: tags } = await supabase
         .from('tags')
-        .select('*, item_tags(count)')
+        .select(`
+            *,
+            item_tags(
+                packing_list_items(
+                    packing_lists(
+                        containers(code)
+                    )
+                )
+            )
+        `)
         .order('name')
 
-    return (tags || []).map(tag => ({
-        ...tag,
-        item_count: tag.item_tags?.[0]?.count || 0,
-    }))
+    return (tags || []).map(tag => {
+        // Extract unique container codes
+        const codes = new Set()
+        tag.item_tags?.forEach(it => {
+            const code = it.packing_list_items?.packing_lists?.containers?.code
+            if (code) codes.add(code)
+        })
+
+        return {
+            ...tag,
+            item_count: tag.item_tags?.length || 0,
+            containers: Array.from(codes)
+        }
+    })
 }
 
 export async function getTagDetail(id) {

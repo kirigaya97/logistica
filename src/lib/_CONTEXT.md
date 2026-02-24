@@ -1,21 +1,23 @@
-# 📂 src/lib
+# 📁 src/lib
 
 ## Propósito
-Este directorio actúa como la capa de utilidades y configuración central de la aplicación de logística. Agrupa las constantes globales de negocio, la lógica de cálculo, la configuración de la base de datos y las herramientas de procesamiento de archivos para ser consumidas por toda la plataforma.
+Este directorio centraliza la lógica de negocio, integraciones de terceros y constantes fundamentales de la aplicación de logística. Actúa como el núcleo de utilidades y configuraciones compartidas, aislando las reglas del dominio logístico y la gestión de datos de los componentes de la interfaz de usuario.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| constants.js | Define constantes críticas del negocio, incluyendo estados de contenedores, orígenes de depósitos, dimensiones/pesos de tipos de contenedores y el mapa de navegación UI. |
-| calculadora/ | Subdirectorio que encapsula la lógica para los motores de cálculo de costos y la calculadora volumétrica. |
-| excel/ | Subdirectorio destinado a las utilidades de parseo y procesamiento de listas de empaque (packing lists) desde planillas de cálculo. |
-| supabase/ | Subdirectorio con la instanciación de los clientes de base de datos (para servidor y cliente) mediante el SDK de Supabase. |
+| `constants.js` | Define las constantes globales y configuraciones estáticas del dominio, incluyendo estados de operación, orígenes (depósitos), especificaciones físicas de contenedores y la estructura de navegación de la aplicación. |
+| `calculadora/` | Subdirectorio que encapsula el motor de cálculo de costos logísticos y la lógica matemática para el cálculo de cubicaje volumétrico. |
+| `excel/` | Subdirectorio encargado del parseo y la extracción de datos de archivos Excel, fundamental para la importación de Packing Lists. |
+| `supabase/` | Subdirectorio que contiene la configuración y los clientes de conexión (tanto para el cliente como para el servidor) de la base de datos Supabase. |
+| `utils/` | Subdirectorio destinado a funciones de utilidad compartidas, como los scripts para exportar información y reportes. |
 
 ## Relaciones
-- **Usa**: Librerías externas para la lectura de planillas de cálculo y el SDK de Supabase (específico dentro de sus subdirectorios correspondientes).
-- **Usado por**: Componentes de interfaz de usuario (ej. Layout/Sidebar usando `NAV_ITEMS`), páginas de Next.js, Server Actions de contenedores, y la calculadora volumétrica consumiendo dimensiones exactas.
+- **Usa**: Dependencias nativas y librerías de terceros gestionadas en los subdirectorios (ej. SDK de Supabase, librerías de manipulación de Excel).
+- **Usado por**: Prácticamente toda la aplicación. Los componentes de UI (layout, tarjetas, formularios), páginas de rutas (App Router), y Server Actions consumen sus constantes, clientes de base de datos y motores de cálculo.
 
 ## Detalles clave
-- Centraliza información física inmutable de los contenedores (largo, ancho, alto y peso máximo) en un solo lugar, previniendo discrepancias de cálculo en diferentes partes de la app.
-- Gestiona de forma centralizada las clases de utilidad de Tailwind (`bg-yellow-100`, etc.) asociadas a los estados de los contenedores, facilitando cambios de diseño globales y evitando cadenas de texto mágicas en los componentes visuales.
-- El patrón de separar la lógica compleja (cálculos, parseo de excel, infraestructura de base de datos) en subdirectorios específicos dentro de `lib` asegura que la capa de UI se mantenga limpia y enfocada solo en la presentación.
+- **Estandarización del Dominio**: `constants.js` provee la fuente de la verdad para el ciclo de vida de un contenedor (depósito, tránsito, aduana, finalizado) y sus etiquetas visuales asociadas.
+- **Límites Físicos**: Las dimensiones (largo, ancho, alto) y los pesos máximos por tipo de contenedor (20', 40', 40' HC) están definidos estáticamente y son la base indispensable para el módulo de `calculadora-volumetrica`.
+- **Navegación Centralizada**: Los grupos y rutas del menú principal (`NAV_GROUPS`) se inyectan desde las constantes, lo que permite modificar la estructura del dashboard sin tocar los componentes visuales.
+- **Modularidad**: La lógica está estrictamente segmentada por dominio de responsabilidad (cálculos, persistencia de datos con Supabase, manejo de archivos Excel y utilidades generales) facilitando el mantenimiento y la escalabilidad.

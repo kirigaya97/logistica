@@ -1,23 +1,26 @@
-Voy a generar el archivo `_CONTEXT.md` para el directorio de componentes de interfaz de usuario, detallando la funcionalidad de carga de archivos, gestión de etiquetas y visualización de estados.
-
-# 🎨 src/components/ui
+# 🧩 src/components/ui
 
 ## Propósito
-Este directorio contiene componentes de interfaz de usuario reutilizables y atómicos que proporcionan funcionalidades transversales como la carga de archivos, la gestión de etiquetas y la visualización de estados consistentes en toda la aplicación de logística.
+Este directorio contiene componentes de interfaz de usuario (UI) reutilizables y genéricos para toda la aplicación. Proporciona elementos estandarizados como botones, inputs y badges para mantener la consistencia visual y de comportamiento.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `FileUpload.js` | Componente de carga de archivos con soporte para arrastrar y soltar (Drag & Drop), optimizado para archivos Excel. |
-| `StatusBadge.js` | Etiqueta visual que muestra el estado actual de un contenedor utilizando el sistema de colores definido en las constantes. |
-| `TagInput.js` | Selector dinámico de etiquetas que permite buscar, seleccionar y crear nuevas categorías en tiempo real con autocompletado. |
+| `ExportButton.js` | Botón que maneja la exportación asíncrona de datos a un archivo Excel, incluyendo el estado de carga y la descarga automática. |
+| `FileUpload.js` | Componente para la subida de archivos (principalmente `.xlsx`, `.xls`) que soporta arrastrar y soltar (drag & drop) o selección manual. |
+| `StatusBadge.js` | Etiqueta visual (badge) que renderiza el estado de un contenedor con colores y textos predefinidos basados en constantes centralizadas. |
+| `TagInput.js` | Input interactivo con autocompletado para buscar, seleccionar, remover y crear nuevas etiquetas (tags) en tiempo real. |
 
 ## Relaciones
-- **Usa**: `lucide-react` (iconografía), `@/lib/constants` (definiciones de estados), `@/app/etiquetas/actions` (Server Actions para persistencia de etiquetas).
-- **Usado por**: Componentes de mayor nivel como `PackingListImporter`, `ClientForm`, `ContainerCard` y diversas vistas en `src/app/`.
+- **Usa**: 
+  - `lucide-react` (Iconografía)
+  - `@/lib/utils/excelExport` (Lógica de generación de archivos Excel)
+  - `@/lib/constants` (Definición de estados de contenedores)
+  - `@/app/etiquetas/actions` (Server actions para buscar y crear etiquetas)
+- **Usado por**: Múltiples componentes, formularios y páginas a lo largo de la aplicación (ej. vistas de contenedores, clientes, listas de empaque).
 
 ## Detalles clave
-- **FileUpload**: Implementa retroalimentación visual según el estado de la carga (arrastrando, archivo seleccionado o vacío) y restringe por defecto los formatos a `.xlsx` y `.xls`.
-- **StatusBadge**: Centraliza la lógica de estilos de estados; cualquier cambio en los colores de `CONTAINER_STATES` se refleja automáticamente aquí.
-- **TagInput**: Incluye una lógica de búsqueda con *debounce* de 200ms para optimizar las peticiones al servidor y permite la creación rápida de etiquetas mediante la tecla "Enter".
-- **Estética**: Todos los componentes utilizan Tailwind CSS y siguen una línea visual limpia basada en bordes redondeados (`rounded-xl`/`rounded-lg`) y tipografía legible de tamaño pequeño/mediano.
+- **ExportButton**: Genera un `Blob` a partir de un buffer de datos y crea dinámicamente un enlace para forzar la descarga del archivo en el navegador del usuario, manejando posibles errores de forma segura.
+- **FileUpload**: Incluye retroalimentación visual al arrastrar un archivo sobre el área activa y permite limpiar la selección actual.
+- **StatusBadge**: Depende del mapeo `CONTAINER_STATES` de las constantes globales, garantizando que los colores y etiquetas sean siempre consistentes en toda la plataforma.
+- **TagInput**: Implementa un "debounce" de 200ms para optimizar las llamadas de búsqueda, maneja el cierre del menú desplegable al hacer clic fuera del componente (click-outside) y permite la creación "inline" de nuevas etiquetas si no existen resultados exactos.

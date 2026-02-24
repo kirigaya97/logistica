@@ -66,15 +66,101 @@ export async function getPackingList(containerId) {
 
     const { data } = await supabase
         .from('packing_lists')
-        .select('*, packing_list_items(*)')
+        .select(`
+            *,
+            packing_list_items(
+                *,
+                clients(name),
+                item_tags(tags(name))
+            )
+        `)
         .eq('container_id', containerId)
         .single()
 
     return data
 }
 
+async function recalculatePackingListTotals(packingListId) {
+    const supabase = await createClient()
+
+    const { data: items } = await supabase
+        .from('packing_list_items')
+        .select('quantity, weight_kg, volume_m3')
+        .eq('packing_list_id', packingListId)
+
+    const totalWeight = items.reduce((sum, i) => sum + (parseFloat(i.weight_kg) || 0), 0)
+    const totalVolume = items.reduce((sum, i) => sum + (parseFloat(i.volume_m3) || 0), 0)
+
+    await supabase
+        .from('packing_lists')
+        .update({
+            total_items: items.length,
+            total_weight_kg: totalWeight,
+            total_volume_m3: totalVolume,
+        })
+        .eq('id', packingListId)
+}
+
+export async function addManualItem(containerId, itemData) {
+    const supabase = await createClient()
+
+    // 1. Get or create packing list
+    let { data: pl } = await supabase
+        .from('packing_lists')
+        .select('id')
+        .eq('container_id', containerId)
+        .single()
+
+    if (!pl) {
+        const { data: newPl, error: plError } = await supabase
+            .from('packing_lists')
+            .insert({
+                container_id: containerId,
+                file_name: 'Manual',
+                total_items: 0,
+                total_weight_kg: 0,
+                total_volume_m3: 0,
+            })
+            .select()
+            .single()
+
+        if (plError) throw new Error(`Error al crear packing list: ${plError.message}`)
+        pl = newPl
+    }
+
+    // 2. Insert item
+    const { error: itemError } = await supabase
+        .from('packing_list_items')
+        .insert({
+            packing_list_id: pl.id,
+            name: itemData.name || 'Sin nombre',
+            quantity: parseInt(itemData.quantity) || 1,
+            weight_kg: parseFloat(itemData.weight_kg) || null,
+            height_cm: parseFloat(itemData.height_cm) || null,
+            width_cm: parseFloat(itemData.width_cm) || null,
+            depth_cm: parseFloat(itemData.depth_cm) || null,
+            volume_m3: parseFloat(itemData.volume_m3) || null,
+            client_id: itemData.client_id || null,
+        })
+
+    if (itemError) throw new Error(`Error al insertar item: ${itemError.message}`)
+
+    // 3. Recalculate totals
+    await recalculatePackingListTotals(pl.id)
+
+    revalidatePath(`/contenedores/${containerId}/packing-list`)
+    revalidatePath(`/contenedores/${containerId}`)
+}
+
 export async function deletePackingListItem(itemId, containerId) {
     const supabase = await createClient()
+
+    // Get PL id before deleting
+    const { data: item } = await supabase
+        .from('packing_list_items')
+        .select('packing_list_id')
+        .eq('id', itemId)
+        .single()
 
     const { error } = await supabase
         .from('packing_list_items')
@@ -82,6 +168,11 @@ export async function deletePackingListItem(itemId, containerId) {
         .eq('id', itemId)
 
     if (error) throw new Error(`Error al eliminar item: ${error.message}`)
+
+    if (item?.packing_list_id) {
+        await recalculatePackingListTotals(item.packing_list_id)
+    }
+
     revalidatePath(`/contenedores/${containerId}/packing-list`)
 }
 

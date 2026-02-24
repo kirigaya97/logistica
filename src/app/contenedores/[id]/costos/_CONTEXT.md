@@ -1,19 +1,20 @@
 # 📁 src/app/contenedores/[id]/costos
 
 ## Propósito
-Gestiona la vista y las operaciones de cálculo de costos de importación asociados a un contenedor específico. Se encarga de inicializar, mostrar y permitir la actualización de la matriz de costos.
+Este directorio maneja la vista y la lógica para el cálculo de costos de importación de un contenedor específico. Permite visualizar, inicializar (basado en plantillas) y actualizar la matriz de costos asociada a las operaciones logísticas del contenedor.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `actions.js` | Server actions para interactuar con Supabase, encargadas de obtener, crear (con valores por defecto) y actualizar los cálculos y los ítems de costo de un contenedor. |
-| `page.js` | Componente de servidor (Server Component) de Next.js que obtiene los datos del contenedor, asegura la existencia de un cálculo de costos y renderiza la interfaz principal a través del componente `CostMatrix`. |
+| `actions.js` | Server Actions que gestionan la interacción con la base de datos para obtener, crear (usando plantillas o valores por defecto) y actualizar los cálculos y sus ítems. |
+| `page.js` | Componente de servidor que actúa como página principal de la ruta, encargada de cargar los datos del contenedor, inicializar el cálculo y renderizar la interfaz con la calculadora. |
 
 ## Relaciones
-- **Usa**: `@/lib/supabase/server` (cliente de base de datos), `@/lib/calculadora/defaults` (constantes de costos por defecto) y `@/components/calculadora/CostMatrix` (componente de UI para la matriz).
-- **Usado por**: Enrutador de Next.js (App Router) al acceder a la ruta `/contenedores/[id]/costos`.
+- **Usa**: `@/lib/supabase/server` (Cliente de base de datos), `@/lib/calculadora/defaults` (Constantes de matriz por defecto), `@/components/calculadora/CostMatrix` (Componente UI de la calculadora), `lucide-react` (Íconos).
+- **Usado por**: Next.js App Router (Ruta accesible a través de la navegación de la app, típicamente desde la vista de detalle del contenedor en `/contenedores/[id]`).
 
 ## Detalles clave
-- **Inicialización Lazy**: El método `getOrCreateCalculation` implementa un patrón donde, si no existe un cálculo de costos para el contenedor al acceder a la ruta, se crea uno automáticamente basándose en `DEFAULT_COST_MATRIX`.
-- **Mutaciones del lado del servidor**: La actualización de los ítems de costo, tanto individual como en lote, se maneja de forma segura mediante Server Actions.
-- **Validación de existencia**: La página verifica que el contenedor exista antes de proceder, devolviendo un error 404 (`notFound()`) en caso contrario.
+- **Patrón "Get or Create"**: Al ingresar a la página, el sistema verifica si existe un cálculo previo. Si no existe, genera uno automáticamente basándose en una plantilla configurada en la base de datos (`cost_template_config`) o mediante un respaldo local (`DEFAULT_COST_MATRIX`).
+- **Optimización de actualizaciones**: La acción de guardado (`saveFullCalculation`) actualiza los valores del contenedor (FOB) y utiliza `Promise.all` para procesar concurrentemente las actualizaciones de todos los ítems de costo modificados, mejorando el rendimiento.
+- **Revalidación de caché**: Tras un guardado exitoso, se invoca `revalidatePath` para asegurar que la UI refleje los datos más recientes en el servidor.
+- **Seguridad en Server Actions**: Se utiliza `.bind()` en el componente de servidor para pre-cargar el `containerId` y `calcId` en la función de guardado antes de pasarla al componente cliente, evitando exponer o manipular estos IDs desde el frontend.

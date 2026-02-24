@@ -1,21 +1,22 @@
-# 📁 src/components/calculadora
+# 📦 src/components/calculadora
 
 ## Propósito
-Este directorio contiene los componentes interactivos de interfaz de usuario destinados a las herramientas de cálculo de la plataforma logística. Facilita la estimación dinámica de costos de importación, la selección de tipos de cambio y la planificación de capacidades volumétricas para contenedores.
+Este módulo provee los componentes de interfaz de usuario para realizar simulaciones de costos de importación y cálculos de capacidad volumétrica en contenedores.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| CostMatrix.js | Componente que renderiza una matriz interactiva para calcular y desglosar costos de importación (FOB, CIF, impuestos, gastos) en tiempo real. |
-| ExchangeRateSelector.js | Componente para seleccionar cotizaciones de divisas (Oficial, Blue, MEP, CCL) consumiendo un hook, con soporte para valores manuales (override). |
-| VolumetricCalc.js | Calculadora que determina la cantidad máxima de cajas, distribución, peso y volumen utilizable dentro de distintos tipos de contenedores, con validación de peso máximo. |
+| CostMatrix.js | Matriz interactiva que permite visualizar y editar el desglose de los costos (FOB, CIF, impuestos y gastos), agrupando los ítems por categoría. |
+| ExchangeRateSelector.js | Componente para seleccionar entre distintas cotizaciones de moneda (Oficial, Blue, MEP, CCL) o ingresar un tipo de cambio de forma manual. |
+| Simulator.js | Panel principal que integra la matriz de costos y gestiona el historial local de simulaciones (crear, listar y eliminar). |
+| VolumetricCalc.js | Calculadora que determina la máxima cantidad de cajas que entran en un contenedor según sus dimensiones, considerando los límites físicos tanto de volumen como de peso. |
 
 ## Relaciones
-- **Usa**: `@/lib/calculadora/engine`, `@/lib/calculadora/defaults`, `@/hooks/useExchangeRate`, `@/lib/constants`, `@/lib/calculadora/volumetric`, e iconos de `lucide-react`.
-- **Usado por**: Páginas de la aplicación que integran calculadoras y análisis de costos (por ejemplo, `src/app/calculadora-volumetrica/page.js`, `src/app/contenedores/[id]/costos/page.js`).
+- **Usa**: `@/lib/calculadora/engine`, `@/lib/calculadora/defaults`, `@/lib/calculadora/volumetric`, `@/lib/constants`, `@/hooks/useExchangeRate`, `@/app/calculadora-costos/actions`, `@/components/ui/ExportButton`, `lucide-react`.
+- **Usado por**: Por determinar (típicamente páginas de aplicación como `src/app/calculadora-costos/page.js` o `src/app/calculadora-volumetrica/page.js`).
 
 ## Detalles clave
-- Todos los archivos son componentes de cliente (`'use client'`) debido al uso intensivo de estado local (`useState`), interactividad de formularios y eventos en tiempo real.
-- `CostMatrix.js` agrupa los ítems dinámicamente según su categoría y recalcula toda la matriz impositiva y de gastos instantáneamente al modificar el valor FOB o activar/desactivar filas.
-- `ExchangeRateSelector.js` contempla el manejo de estados de interfaz (carga, error) delegando la obtención de datos al hook `useExchangeRate`.
-- `VolumetricCalc.js` provee retroalimentación visual al usuario indicando si la configuración de cajas actual es válida o si excede el peso máximo soportado por el contenedor seleccionado.
+- `CostMatrix` calcula dinámicamente los totales (FOB, CIF, Base Imponible, Tributos, etc.) usando el motor centralizado mientras el usuario altera valores en la tabla.
+- `VolumetricCalc` incorpora validación estricta y alertas visuales si la cantidad de cajas supera el peso máximo del contenedor, priorizando el límite de peso por sobre el volumen si corresponde.
+- `Simulator` delega la persistencia del estado en el backend utilizando Server Actions (`saveSimulation`, `deleteSimulation`).
+- El diseño general está enfocado en dar feedback visual rápido ante cambios, mostrando cargas asíncronas e indicadores de límites físicos en logística operativa.

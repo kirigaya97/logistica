@@ -17,11 +17,32 @@ export const CONTAINER_TYPES = {
     '40HC': { label: "40' HC", lengthCm: 1203, widthCm: 235, heightCm: 269, maxWeightKg: 28400 },
 }
 
-export const NAV_ITEMS = [
-    { href: '/', label: 'Dashboard', icon: 'LayoutDashboard' },
-    { href: '/contenedores', label: 'Contenedores', icon: 'Container' },
-    { href: '/clientes', label: 'Clientes', icon: 'Users' },
-    { href: '/etiquetas', label: 'Etiquetas', icon: 'Tags' },
-    { href: '/calculadora-volumetrica', label: 'Volumétrica', icon: 'Box' },
-    { href: '/historico', label: 'Histórico', icon: 'Archive' },
+export const NAV_GROUPS = [
+    {
+        title: 'Gestión',
+        items: [
+            { href: '/', label: 'Dashboard', icon: 'LayoutDashboard' },
+            { href: '/contenedores', label: 'Contenedores', icon: 'Container' },
+        ]
+    },
+    {
+        title: 'Herramientas',
+        items: [
+            { href: '/calculadora-costos', label: 'Simulador Costos', icon: 'Calculator' },
+            { href: '/calculadora-volumetrica', label: 'Cubicaje', icon: 'Box' },
+        ]
+    },
+    {
+        title: 'Maestros',
+        items: [
+            { href: '/clientes', label: 'Clientes', icon: 'Users' },
+            { href: '/etiquetas', label: 'Etiquetas', icon: 'Tags' },
+        ]
+    },
+    {
+        title: 'Historial',
+        items: [
+            { href: '/historico', label: 'Histórico', icon: 'Archive' },
+        ]
+    }
 ]

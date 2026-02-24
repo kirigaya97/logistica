@@ -28,12 +28,18 @@ export function calculateVolumetric(container, box) {
 
     const utilizationPct = (volumeUsedM3 / containerVolumeM3) * 100
 
+    const maxBoxesByWeight = box.weightKg > 0
+        ? Math.floor(container.maxWeightKg / box.weightKg)
+        : Infinity
+
     return {
         boxesLength,
         boxesWidth,
         boxesHeight,
         totalBoxes,
         totalWeight,
+        maxBoxesByWeight,
+        effectiveMaxBoxes: Math.min(totalBoxes, maxBoxesByWeight),
         isValid,
         volumeUsedM3: Math.round(volumeUsedM3 * 100) / 100,
         containerVolumeM3: Math.round(containerVolumeM3 * 100) / 100,

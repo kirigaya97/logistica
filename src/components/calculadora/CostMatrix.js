@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { calculateCosts } from '@/lib/calculadora/engine'
 import { CATEGORY_LABELS } from '@/lib/calculadora/defaults'
-import { DollarSign, Eye, EyeOff } from 'lucide-react'
+import { DollarSign, Eye, EyeOff, Save, Loader2 } from 'lucide-react'
 
 export default function CostMatrix({ calculation, onSave }) {
     const [fob, setFob] = useState(calculation?.fob_total || 0)
@@ -16,6 +16,8 @@ export default function CostMatrix({ calculation, onSave }) {
                 valueType: item.value_type,
             }))
     )
+    const [isDirty, setIsDirty] = useState(false)
+    const [saving, setSaving] = useState(false)
 
     const result = calculateCosts({ fobTotal: fob }, items)
 
@@ -23,7 +25,20 @@ export default function CostMatrix({ calculation, onSave }) {
         setItems(prev => prev.map(item =>
             item.id === id ? { ...item, [field]: value } : item
         ))
+        setIsDirty(true)
     }, [])
+
+    async function handleSave() {
+        if (!onSave) return
+        setSaving(true)
+        try {
+            await onSave({ fobTotal: fob, items })
+            setIsDirty(false)
+        } catch (e) {
+            alert(e.message)
+        }
+        setSaving(false)
+    }
 
     // Group items by category
     const grouped = {}
@@ -33,7 +48,7 @@ export default function CostMatrix({ calculation, onSave }) {
     })
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 relative">
             {/* FOB Input */}
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -44,7 +59,10 @@ export default function CostMatrix({ calculation, onSave }) {
                     type="number"
                     step="0.01"
                     value={fob || ''}
-                    onChange={(e) => setFob(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                        setFob(parseFloat(e.target.value) || 0)
+                        setIsDirty(true)
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-lg font-medium"
                     placeholder="0.00"
                 />
@@ -118,6 +136,18 @@ export default function CostMatrix({ calculation, onSave }) {
                     <hr />
                     <div className="flex justify-between text-lg font-bold"><span>COSTO TOTAL</span><span className="text-blue-700">${result.costoTotal.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span></div>
                 </div>
+            </div>
+
+            {/* Save Button Floating */}
+            <div className={`sticky bottom-6 flex justify-end transition-all pb-4 ${isDirty ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-xl hover:bg-blue-700 flex items-center gap-2 font-semibold border-2 border-white"
+                >
+                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                    {saving ? 'Guardando...' : 'Guardar Cambios'}
+                </button>
             </div>
         </div>
     )

@@ -14,7 +14,7 @@ export async function getOrCreateCalculation(containerId) {
         .eq('container_id', containerId)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
 
     if (existing) return existing
 
@@ -27,16 +27,25 @@ export async function getOrCreateCalculation(containerId) {
 
     if (calcError) throw new Error(`Error al crear cálculo: ${calcError.message}`)
 
-    // Insert default items
-    const defaultItems = DEFAULT_COST_MATRIX.map((item, idx) => ({
+    // 1. Try to get template from DB
+    const { data: template } = await supabase
+        .from('cost_template_config')
+        .select('items')
+        .eq('is_default', true)
+        .maybeSingle()
+
+    const templateItems = template?.items || DEFAULT_COST_MATRIX
+
+    // 2. Insert items
+    const defaultItems = templateItems.map((item, idx) => ({
         calculation_id: calc.id,
         category: item.category,
         name: item.name,
-        value_type: item.valueType,
+        value_type: item.value_type || item.valueType,
         base: item.base,
         value: item.value,
         is_active: item.isActive,
-        sort_order: item.sortOrder || idx,
+        sort_order: item.sort_order ?? item.sortOrder ?? idx,
     }))
 
     const { error: itemsError } = await supabase
@@ -55,34 +64,30 @@ export async function getOrCreateCalculation(containerId) {
     return full
 }
 
-export async function updateCostItem(itemId, updates) {
+export async function saveFullCalculation(containerId, calcId, { fobTotal, items }) {
     const supabase = await createClient()
 
-    const { error } = await supabase
-        .from('cost_items')
-        .update(updates)
-        .eq('id', itemId)
-
-    if (error) throw new Error(`Error al actualizar: ${error.message}`)
-}
-
-export async function updateCalculation(calcId, updates, containerId) {
-    const supabase = await createClient()
-
-    const { error } = await supabase
+    // 1. Update FOB in calculation
+    const { error: calcError } = await supabase
         .from('cost_calculations')
-        .update(updates)
+        .update({ fob_total: fobTotal })
         .eq('id', calcId)
 
-    if (error) throw new Error(`Error al actualizar cálculo: ${error.message}`)
+    if (calcError) throw new Error(`Error al guardar totales: ${calcError.message}`)
+
+    // 2. Update items (using Promise.all for speed)
+    const updates = items.map(item => {
+        const { id, isActive, value } = item
+        return supabase
+            .from('cost_items')
+            .update({
+                is_active: isActive,
+                value
+            })
+            .eq('id', id)
+    })
+
+    await Promise.all(updates)
+
     revalidatePath(`/contenedores/${containerId}/costos`)
-}
-
-export async function saveBatchCostItems(items) {
-    const supabase = await createClient()
-
-    for (const item of items) {
-        const { id, ...updates } = item
-        await supabase.from('cost_items').update(updates).eq('id', id)
-    }
 }

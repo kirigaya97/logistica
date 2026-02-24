@@ -1,20 +1,19 @@
-Para generar el archivo solicitado, analizaré el contenido de `page.js` y la estructura del proyecto para definir sus propósitos y relaciones.
-
-# 📜 src/app/historico
+# 📂 src/app/historico
 
 ## Propósito
-Este módulo está destinado a la visualización y consulta del registro histórico de operaciones logísticas, cálculos de costos y estados de contenedores finalizados. Actualmente funciona como un marcador de posición para la futura implementación de la bitácora del sistema.
+Este directorio gestiona la vista del historial de operaciones logísticas. Su propósito principal es presentar un panel de lectura y un listado de todos los contenedores cuyo estado es estrictamente "finalizado", permitiendo la auditoría y consulta de registros pasados.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Punto de entrada del módulo que renderiza la vista principal del historial (actualmente en construcción). |
+| page.js | Componente de servidor que consulta los contenedores finalizados, calcula estadísticas temporales (total general y mes pasado) y renderiza una tabla resumen con enlaces al detalle. |
 
 ## Relaciones
-- **Usa**: Ninguno (sin dependencias externas en su estado actual).
-- **Usado por**: El sistema de navegación principal (`Sidebar.js`) para permitir el acceso al registro de datos.
+- **Usa**: `@/lib/supabase/server` (conexión a base de datos), `@/lib/constants` (diccionarios de almacenes y tipos de contenedores), `@/components/ui/StatusBadge` (interfaz), `lucide-react` (iconografía) y `next/link` (navegación interna).
+- **Usado por**: Next.js App Router (expone la ruta de acceso público/autenticado `/historico` en la aplicación).
 
 ## Detalles clave
-- El componente es un Server Component por defecto al no declarar directivas de cliente.
-- Presenta un estado visual de "Módulo en construcción" utilizando clases estándar de Tailwind CSS para mantener la consistencia estética del proyecto.
-- Se prevé que este módulo consuma datos de las tablas de Supabase relacionadas con el histórico de cálculos y movimientos.
+- La consulta de datos aplica un filtro fuerte en el servidor (`eq('status', 'finalizado')`), asegurando que solo se exponga la carga histórica.
+- Las estadísticas de "Finalizados Mes Pasado" se calculan dinámicamente en memoria evaluando la fecha de arribo (ETA) contra el mes y año actuales.
+- Es un React Server Component, por lo que la obtención de datos de Supabase y la resolución de constantes (origen, tipo de contenedor) ocurren del lado del servidor.
+- La tabla de resultados actúa como punto de entrada hacia la información detallada y de solo lectura de cada contenedor mediante la ruta `/contenedores/[id]`.

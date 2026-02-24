@@ -1,10 +1,8 @@
-# 📁 src/lib/calculadora
+# 📁 src/lib/utils
 
 > Auto-generado por `scripts/map-context.mjs` (modo determinístico)
 
 ## Archivos
 | Archivo | Tamaño | Imports |
 |---|---|---|
-| `defaults.js` | 3.3 KB | — |
-| `engine.js` | 4.5 KB | — |
-| `volumetric.js` | 1.8 KB | — |
+| `excelExport.js` | 10.7 KB | exceljs, @/lib/calculadora/defaults |

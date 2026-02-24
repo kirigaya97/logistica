@@ -64,6 +64,37 @@ export async function updateContainerStatus(id, newStatus) {
     revalidatePath(`/contenedores/${id}`)
 }
 
+export async function revertContainerStatus(id, previousStatus) {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+        .from('containers')
+        .update({ status: previousStatus })
+        .eq('id', id)
+
+    if (error) throw new Error(`Error al revertir estado: ${error.message}`)
+    revalidatePath('/contenedores')
+    revalidatePath(`/contenedores/${id}`)
+}
+
+export async function updateContainer(id, formData) {
+    const supabase = await createClient()
+    const raw = Object.fromEntries(formData)
+
+    // We reuse the schema but allow partial updates for the form
+    const parsed = containerSchema.partial().parse(raw)
+
+    const { error } = await supabase
+        .from('containers')
+        .update(parsed)
+        .eq('id', id)
+
+    if (error) throw new Error(`Error al actualizar contenedor: ${error.message}`)
+
+    revalidatePath('/contenedores')
+    revalidatePath(`/contenedores/${id}`)
+}
+
 export async function deleteContainer(id) {
     const supabase = await createClient()
 
