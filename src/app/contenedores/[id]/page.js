@@ -4,7 +4,7 @@ import StatusBadge from '@/components/ui/StatusBadge'
 import { WAREHOUSES, CONTAINER_TYPES, CONTAINER_STATES } from '@/lib/constants'
 import { updateContainerStatus, deleteContainer } from '@/app/contenedores/actions'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, MapPin, Box, DollarSign, FileSpreadsheet, Pencil, Undo2, Users } from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin, Box, DollarSign, FileSpreadsheet, Pencil, Undo2, Users, Weight } from 'lucide-react'
 import DeleteContainerButton from '@/components/contenedores/DeleteContainerButton'
 import ContainerEditForm from '@/components/contenedores/ContainerEditForm'
 import RevertStatusButton from '@/components/contenedores/RevertStatusButton'
@@ -116,7 +116,7 @@ export default async function ContainerDetailPage({ params, searchParams }) {
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                             <div className="bg-gray-50 rounded-lg p-4">
                                 <p className="text-xs text-gray-500 mb-1">Origen</p>
                                 <p className="font-medium"><MapPin className="w-4 h-4 inline mr-1" />{warehouse?.flag} {warehouse?.label}</p>
@@ -124,6 +124,10 @@ export default async function ContainerDetailPage({ params, searchParams }) {
                             <div className="bg-gray-50 rounded-lg p-4">
                                 <p className="text-xs text-gray-500 mb-1">Tipo</p>
                                 <p className="font-medium"><Box className="w-4 h-4 inline mr-1" />{type?.label}</p>
+                            </div>
+                            <div className="bg-gray-50 rounded-lg p-4">
+                                <p className="text-xs text-gray-500 mb-1">Capacidad</p>
+                                <p className="font-medium"><Weight className="w-4 h-4 inline mr-1" />{container.weight_capacity_tons} TN</p>
                             </div>
                             <div className="bg-gray-50 rounded-lg p-4">
                                 <p className="text-xs text-gray-500 mb-1">ETD</p>

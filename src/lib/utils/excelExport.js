@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs'
 import { CATEGORY_LABELS } from '@/lib/calculadora/defaults'
+import { CONTAINER_TYPES } from '@/lib/constants'
 
 // ── Styling helper ──────────────────────────────────────────────
 function applySheetStyling(sheet, { hasTotals = false } = {}) {
@@ -80,7 +81,7 @@ function buildContainerList(workbook, data) {
             code: c.code,
             status: STATUS_MAP[c.status] || c.status,
             origin: ORIGIN_MAP[c.origin_warehouse] || c.origin_warehouse,
-            type: c.container_type ? `${c.container_type}'` : '—',
+            type: c.container_type ? (CONTAINER_TYPES[c.container_type]?.label || c.container_type) : '—',
             etd: c.etd ? new Date(c.etd).toLocaleDateString('es-AR') : '—',
             eta: c.eta ? new Date(c.eta).toLocaleDateString('es-AR') : '—',
             description: c.description || '',
@@ -192,7 +193,7 @@ function buildContainerInfo(workbook, container) {
         { field: 'Código', value: container.code },
         { field: 'Estado', value: container.status },
         { field: 'Origen', value: ORIGIN_MAP[container.origin_warehouse] || container.origin_warehouse },
-        { field: 'Tipo', value: container.container_type ? `${container.container_type}'` : '—' },
+        { field: 'Tipo', value: container.container_type ? (CONTAINER_TYPES[container.container_type]?.label || container.container_type) : '—' },
         { field: 'ETD', value: container.etd ? new Date(container.etd).toLocaleDateString('es-AR') : '—' },
         { field: 'ETA', value: container.eta ? new Date(container.eta).toLocaleDateString('es-AR') : '—' },
         { field: 'Descripción', value: container.description || '—' },

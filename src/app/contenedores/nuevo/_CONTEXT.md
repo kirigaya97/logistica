@@ -1,24 +1,23 @@
-# 📁 src/app/contenedores/nuevo
+# 📦 src/app/contenedores/nuevo
 
 ## Propósito
-Este módulo proporciona la interfaz y la lógica necesaria para dar de alta un nuevo contenedor en el sistema, permitiendo definir su origen, tipo y cronograma estimado de viaje.
+Interfaz de usuario para la creación y registro de nuevos contenedores en el sistema. Facilita la carga de datos logísticos iniciales, como el depósito de origen, especificaciones técnicas y cronograma estimado.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| page.js | Componente de página que renderiza el formulario de creación de contenedor con validaciones básicas y navegación. |
+| page.js | Componente de página que renderiza el formulario de alta y gestiona la interacción del usuario para la creación de contenedores. |
 
 ## Relaciones
-- **Usa**: 
-    - `@/lib/constants` (para obtener los depósitos y tipos de contenedores permitidos).
-    - `@/app/contenedores/actions` (ejecuta la Server Action `createContainer`).
-    - `lucide-react` (iconografía de interfaz).
-    - `next/link` (navegación hacia el listado de contenedores).
-- **Usado por**: Por determinar (generalmente vinculado desde el dashboard o el listado principal de contenedores).
+- **Usa**:
+    - `@/lib/constants.js`: Para obtener las listas maestras de depósitos, tipos de contenedores y capacidades de peso permitidas.
+    - `@/app/contenedores/actions.js`: Consume la Server Action `createContainer` para procesar y persistir los datos.
+    - `next/link`: Para la navegación de retorno hacia el listado general.
+    - `lucide-react`: Para la iconografía de la interfaz.
+- **Usado por**: Módulo principal de contenedores (`/contenedores`) como punto de entrada para nuevos registros.
 
 ## Detalles clave
-- **Lógica de Servidor**: El formulario utiliza la acción `createContainer` que valida los datos mediante un esquema de Zod antes de persistirlos en Supabase.
-- **Identificación Automática**: El sistema genera automáticamente un código único para el contenedor siguiendo el patrón `{ORIGEN}-{AÑO}-{SECUENCIA}` (ej: HK-2024-001).
-- **Integración de Constantes**: Los selectores de "Depósito de Origen" y "Tipo de Contenedor" se alimentan directamente de las definiciones globales en `constants.js`, asegurando consistencia en los datos.
-- **Flujo de Usuario**: Tras una creación exitosa, el sistema realiza una revalidación de caché de la ruta `/contenedores` y redirige al usuario al listado principal.
-- **Fechas Logísticas**: Permite la carga de ETD (salida estimada) y ETA (arribo estimado) para el seguimiento temprano del transporte.
+- **Acciones de Servidor**: Implementa el envío de datos mediante Server Actions, lo que permite un manejo simplificado del estado del formulario y redirecciones automáticas tras el éxito.
+- **Generación de Identificadores**: El proceso de creación dispara una lógica de generación de códigos automáticos con formato `[ORIGEN]-[AÑO]-[SECUENCIA]` (ej. HK-2026-001).
+- **Validación de Datos**: La integridad de la información está garantizada por un esquema de Zod en el lado del servidor que valida tipos de depósito, contenedores y rangos de peso.
+- **Campos Logísticos**: Permite la definición opcional de fechas críticas como ETD (salida estimada) y ETA (arribo estimado) desde el momento del alta.

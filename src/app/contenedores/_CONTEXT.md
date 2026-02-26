@@ -1,23 +1,25 @@
 # 📦 src/app/contenedores
 
 ## Propósito
-Este módulo centraliza la gestión de contenedores internacionales, permitiendo su visualización, filtrado por estado u origen, creación de nuevas unidades y administración de su ciclo de vida logístico.
+Este módulo centraliza la gestión de contenedores de logística internacional, permitiendo el listado, filtrado, creación, edición y seguimiento de estados de las unidades de carga.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| actions.js | Acciones de servidor para operaciones CRUD, cambios de estado y lógica de generación de códigos correlativos. |
-| page.js | Página principal que renderiza el listado de contenedores, integrando filtros dinámicos y exportación a Excel. |
-| [id]/ | Subdirectorio para la visualización detallada y edición de un contenedor específico. |
-| nuevo/ | Subdirectorio que contiene el formulario para el alta de nuevos contenedores. |
+| `actions.js` | Acciones de servidor para el CRUD de contenedores, validación con Zod y lógica de generación de códigos. |
+| `page.js` | Página principal que renderiza el listado de contenedores con soporte para filtros dinámicos y exportación. |
 
 ## Relaciones
 - **Usa**: `@/lib/supabase/server`, `@/components/contenedores/ContainerCard`, `@/components/contenedores/ContainerFilters`, `@/components/ui/ExportButton`, `zod`, `next/cache`, `next/navigation`.
-- **Usado por**: Navegación principal de la aplicación y flujos de gestión de carga.
+- **Usado por**: Navegación principal del sistema (Sidebar/Header).
 
 ## Detalles clave
-- **Generación de Códigos**: Implementa una lógica automática para crear códigos únicos basados en el prefijo del almacén (HK, CH, USA), el año actual y un secuencial de tres dígitos.
-- **Validación**: Utiliza `zod` para garantizar la integridad de los datos (almacén, tipo de contenedor, fechas) antes de persistir en Supabase.
-- **Estados Dinámicos**: Permite actualizar y revertir el estado de los contenedores, disparando revalidaciones de ruta para mantener la interfaz sincronizada.
-- **Filtros por URL**: La lista principal responde a `searchParams` (`status`, `origin`), permitiendo compartir vistas filtradas mediante la URL.
-- **Exportación**: Integra un componente de exportación que genera reportes en formato Excel basados en los datos filtrados actualmente.
+- **Generación de Códigos**: Incluye una función `generateCode` que crea identificadores únicos basados en el origen y el año actual (ej: `HK-2026-001`).
+- **Validación de Datos**: Utiliza `zod` para asegurar que los pesos, tipos de contenedor (40HC, 40ST) y almacenes de origen sean válidos antes de impactar la base de datos.
+- **Filtrado Server-side**: La página principal procesa `searchParams` para filtrar por estado y origen directamente en la consulta a Supabase.
+- **Sincronización de UI**: Implementa `revalidatePath` en todas las acciones de escritura para asegurar que los cambios se reflejen inmediatamente en el listado y el detalle.
+- **Exportación**: Integra un botón de exportación que genera reportes en formato Excel a partir de los datos filtrados actualmente.
+
+## Subdirectorios
+- `nuevo/`: Formulario y lógica para la creación de nuevos contenedores.
+- `[id]/`: Vista de detalle, edición, gestión de costos y packing list de un contenedor específico.

@@ -12,6 +12,9 @@ const isFullMode = process.argv.includes('--full');
 const isDryRun = process.argv.includes('--dry-run');
 const isQuiet = process.argv.includes('--quiet');
 
+// ─── Usage Metrics ──────────────────────────────────────────────────
+const metrics = { dirs: [], geminiCalls: 0, deterministicCalls: 0, totalPromptChars: 0, totalResponseChars: 0 };
+
 // ─── Utilities ──────────────────────────────────────────────────────
 
 function log(...args) {
@@ -171,6 +174,7 @@ function isGeminiAvailable() {
  */
 async function generateWithGeminiCLI(dirInfo, existingManualSections) {
     const prompt = buildGeminiPrompt(dirInfo, existingManualSections);
+    const callStart = Date.now();
 
     try {
         const tempPromptFile = join(ROOT, '.context-prompt-temp.txt');
@@ -193,7 +197,22 @@ async function generateWithGeminiCLI(dirInfo, existingManualSections) {
         // Clean up temp file
         try { unlinkSync(tempPromptFile); } catch { }
 
-        return result.trim();
+        const responseText = result.trim();
+        const elapsed = Date.now() - callStart;
+
+        // Track metrics
+        metrics.geminiCalls++;
+        metrics.totalPromptChars += prompt.length;
+        metrics.totalResponseChars += responseText.length;
+        metrics.dirs.push({
+            path: dirInfo.path,
+            mode: 'gemini',
+            promptChars: prompt.length,
+            responseChars: responseText.length,
+            elapsedMs: elapsed,
+        });
+
+        return responseText;
     } catch (e) {
         warn(`Gemini CLI falló para ${dirInfo.path}: ${e.message}`);
         // Clean up temp file on error too
@@ -464,6 +483,8 @@ async function main() {
         // Fallback to deterministic if Gemini failed or is not available
         if (!content) {
             content = generateDeterministic(dir, manualSections);
+            metrics.deterministicCalls++;
+            metrics.dirs.push({ path: dir.path, mode: 'deterministic', promptChars: 0, responseChars: content.length, elapsedMs: 0 });
         }
 
         if (!isDryRun) {
@@ -484,6 +505,26 @@ async function main() {
 
     const elapsed = Date.now() - startTime;
     log(`\n✨ Completado: ${processed} directorios procesados en ${elapsed}ms`);
+
+    // ─── Usage Report ────────────────────────────────────────────
+    if (metrics.dirs.length > 0) {
+        log('\n📊 Gemini CLI Usage Report');
+        log('─'.repeat(90));
+        log(`${'Directory'.padEnd(45)} ${'Mode'.padEnd(14)} ${'Prompt'.padStart(8)} ${'Response'.padStart(10)} ${'Time'.padStart(8)}`);
+        log('─'.repeat(90));
+        for (const d of metrics.dirs) {
+            const mode = d.mode === 'gemini' ? '🤖 gemini' : '📐 determ.';
+            const prompt = d.mode === 'gemini' ? `${(d.promptChars / 1000).toFixed(1)}k` : '—';
+            const response = `${(d.responseChars / 1000).toFixed(1)}k`;
+            const time = d.mode === 'gemini' ? `${(d.elapsedMs / 1000).toFixed(1)}s` : '—';
+            log(`  ${d.path.padEnd(43)} ${mode.padEnd(14)} ${prompt.padStart(8)} ${response.padStart(10)} ${time.padStart(8)}`);
+        }
+        log('─'.repeat(90));
+        log(`  Gemini calls: ${metrics.geminiCalls} | Deterministic: ${metrics.deterministicCalls}`);
+        log(`  Total prompt: ${(metrics.totalPromptChars / 1000).toFixed(1)}k chars (~${Math.ceil(metrics.totalPromptChars / 4)} tokens est.)`);
+        log(`  Total response: ${(metrics.totalResponseChars / 1000).toFixed(1)}k chars (~${Math.ceil(metrics.totalResponseChars / 4)} tokens est.)`);
+        log(`  Total time: ${(elapsed / 1000).toFixed(1)}s`);
+    }
 }
 
 /**

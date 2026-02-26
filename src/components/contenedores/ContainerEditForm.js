@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateContainer } from '@/app/contenedores/actions'
-import { WAREHOUSES, CONTAINER_TYPES } from '@/lib/constants'
+import { WAREHOUSES, CONTAINER_TYPES, WEIGHT_CAPACITIES_TN } from '@/lib/constants'
 
 export default function ContainerEditForm({ container }) {
     const router = useRouter()
@@ -61,19 +61,35 @@ export default function ContainerEditForm({ container }) {
                         ))}
                     </select>
                 </div>
-                <div>
-                    <label htmlFor="container_type" className="block text-sm font-medium text-gray-700 mb-2">Tipo de Contenedor *</label>
-                    <select
-                        id="container_type"
-                        name="container_type"
-                        required
-                        defaultValue={container.container_type}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    >
-                        {Object.entries(CONTAINER_TYPES).map(([key, val]) => (
-                            <option key={key} value={key}>{val.label}</option>
-                        ))}
-                    </select>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label htmlFor="container_type" className="block text-sm font-medium text-gray-700 mb-2">Tipo *</label>
+                        <select
+                            id="container_type"
+                            name="container_type"
+                            required
+                            defaultValue={container.container_type}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        >
+                            {Object.entries(CONTAINER_TYPES).map(([key, val]) => (
+                                <option key={key} value={key}>{val.label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="weight_capacity_tons" className="block text-sm font-medium text-gray-700 mb-2">Peso (TN) *</label>
+                        <select
+                            id="weight_capacity_tons"
+                            name="weight_capacity_tons"
+                            required
+                            defaultValue={container.weight_capacity_tons || 24}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        >
+                            {WEIGHT_CAPACITIES_TN.map(tn => (
+                                <option key={tn} value={tn}>{tn} TN</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </div>
 

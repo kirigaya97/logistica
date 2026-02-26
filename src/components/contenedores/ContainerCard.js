@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import StatusBadge from '@/components/ui/StatusBadge'
-import { WAREHOUSES } from '@/lib/constants'
+import { WAREHOUSES, CONTAINER_TYPES } from '@/lib/constants'
 import { Calendar, MapPin } from 'lucide-react'
 
 export default function ContainerCard({ container }) {
@@ -19,7 +19,7 @@ export default function ContainerCard({ container }) {
             <div className="space-y-2 text-sm text-gray-500">
                 <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    <span>{warehouse?.flag} {warehouse?.label} — {container.container_type}'</span>
+                    <span>{warehouse?.flag} {warehouse?.label} — {CONTAINER_TYPES[container.container_type]?.label || container.container_type} — {container.weight_capacity_tons} TN</span>
                 </div>
 
                 {container.eta && (

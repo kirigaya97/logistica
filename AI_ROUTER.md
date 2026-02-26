@@ -2,7 +2,7 @@
 
 > Punto de entrada para agentes IA. Leé este archivo primero.  
 > Auto-generado por `scripts/map-context.mjs`  
-> Última actualización: 2026-02-24
+> Última actualización: 2026-02-26
 
 ## Proyecto
 Sistema de gestión de logística internacional con 3 depósitos (HK, CH, USA). Seguimiento de contenedores, clasificación de mercadería, cálculo de costos de importación, dashboards operativos.
@@ -53,7 +53,7 @@ Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · Tailwind CSS
 | `src/lib/utils/` | 1 | [→ _CONTEXT.md](src/lib/utils/_CONTEXT.md) |
 | `src/lib/` | 1 | [→ _CONTEXT.md](src/lib/_CONTEXT.md) |
 | `src/` | 1 | [→ _CONTEXT.md](src/_CONTEXT.md) |
-| `supabase/migrations/` | 8 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
+| `supabase/migrations/` | 9 | [→ _CONTEXT.md](supabase/migrations/_CONTEXT.md) |
 | `./` | 3 | [→ _CONTEXT.md](./_CONTEXT.md) |
 
 ## Documentación

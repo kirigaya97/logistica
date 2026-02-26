@@ -1,16 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { CONTAINER_TYPES } from '@/lib/constants'
+import { CONTAINER_TYPES, WEIGHT_CAPACITIES_TN } from '@/lib/constants'
 import { calculateVolumetric } from '@/lib/calculadora/volumetric'
 import { Box, AlertTriangle, CheckCircle } from 'lucide-react'
 
 export default function VolumetricCalc() {
     const [containerType, setContainerType] = useState('40HC')
+    const [weightCapacityTn, setWeightCapacityTn] = useState(24)
     const [box, setBox] = useState({ lengthCm: 0, widthCm: 0, heightCm: 0, weightKg: 0 })
 
     const container = CONTAINER_TYPES[containerType]
-    const result = calculateVolumetric(container, box)
+    const result = calculateVolumetric({ ...container, maxWeightKg: weightCapacityTn * 1000 }, box)
 
     function handleBoxChange(field, value) {
         setBox(prev => ({ ...prev, [field]: parseFloat(value) || 0 }))
@@ -18,27 +19,52 @@ export default function VolumetricCalc() {
 
     return (
         <div className="space-y-6">
-            {/* Container Type */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Contenedor</label>
-                <div className="flex gap-3">
-                    {Object.entries(CONTAINER_TYPES).map(([key, val]) => (
-                        <button
-                            key={key}
-                            type="button"
-                            onClick={() => setContainerType(key)}
-                            className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${containerType === key
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                                }`}
-                        >
-                            {val.label}
-                        </button>
-                    ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Container Type */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Contenedor</label>
+                    <div className="flex gap-2">
+                        {Object.entries(CONTAINER_TYPES).map(([key, val]) => (
+                            <button
+                                key={key}
+                                type="button"
+                                onClick={() => setContainerType(key)}
+                                className={`flex-1 px-4 py-2 rounded-lg border text-sm font-medium transition-all ${containerType === key
+                                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                                    }`}
+                            >
+                                {val.label}
+                            </button>
+                        ))}
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-2">
+                        Medidas: {container.lengthCm}×{container.widthCm}×{container.heightCm} cm
+                    </p>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">
-                    Interior: {container.lengthCm}×{container.widthCm}×{container.heightCm} cm — Peso máx: {container.maxWeightKg.toLocaleString('es-AR')} kg
-                </p>
+
+                {/* Weight Capacity */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Capacidad de Peso (TN)</label>
+                    <div className="grid grid-cols-4 gap-1.5">
+                        {WEIGHT_CAPACITIES_TN.map((tn) => (
+                            <button
+                                key={tn}
+                                type="button"
+                                onClick={() => setWeightCapacityTn(tn)}
+                                className={`px-2 py-1.5 rounded-lg border text-xs font-medium transition-all ${weightCapacityTn === tn
+                                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                                    }`}
+                            >
+                                {tn}T
+                            </button>
+                        ))}
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-2">
+                        Límite: {(weightCapacityTn * 1000).toLocaleString('es-AR')} kg
+                    </p>
+                </div>
             </div>
 
             {/* Box dimensions */}
@@ -147,14 +173,14 @@ export default function VolumetricCalc() {
                             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                                 <div className={`h-full rounded-full ${result.isValid ? 'bg-green-500' : 'bg-red-500'}`} style={{ width: `${Math.min(result.weightUtilizationPct, 100)}%` }}></div>
                             </div>
-                            <p className="text-[10px] text-gray-400 mt-2">{result.totalWeight.toLocaleString('es-AR')} kg de {container.maxWeightKg.toLocaleString('es-AR')} kg</p>
+                            <p className="text-[10px] text-gray-400 mt-2">{result.totalWeight.toLocaleString('es-AR')} kg de {(weightCapacityTn * 1000).toLocaleString('es-AR')} kg</p>
                         </div>
                     </div>
 
                     {!result.isValid && (
                         <div className="mt-4 flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
                             <AlertTriangle className="w-4 h-4" />
-                            <span>El peso total excede el máximo permitido ({container.maxWeightKg.toLocaleString('es-AR')} kg).</span>
+                            <span>El peso total excede el máximo permitido ({(weightCapacityTn * 1000).toLocaleString('es-AR')} kg).</span>
                         </div>
                     )}
 

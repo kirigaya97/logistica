@@ -1,23 +1,23 @@
 # 📦 src/components/contenedores
 
 ## Propósito
-Este directorio contiene los componentes de interfaz de usuario específicos para la gestión y visualización de contenedores logísticos. Incluye tarjetas de resumen, formularios de edición, filtros de búsqueda y botones para acciones de control de estado.
+Este directorio contiene los componentes de interfaz de usuario especializados para la visualización, filtrado y edición de contenedores dentro del sistema de logística.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| ContainerCard.js | Tarjeta resumen que muestra la información principal de un contenedor (código, estado, origen, ETA y descripción) y sirve como enlace a su vista detallada. |
-| ContainerEditForm.js | Formulario de cliente para editar los detalles de un contenedor (origen, tipo, fechas estimadas, descripción y notas), interactuando con las acciones del servidor. |
-| ContainerFilters.js | Componente de cliente que permite filtrar la lista de contenedores por estado y almacén de origen, reflejando los filtros en los parámetros de la URL. |
-| DeleteContainerButton.js | Botón con confirmación nativa del navegador para eliminar un contenedor y todos sus cálculos asociados. |
-| RevertStatusButton.js | Botón de cliente que permite deshacer el cambio de estado de un contenedor y volver a un estado anterior específico mediante una acción de servidor. |
+| ContainerCard.js | Tarjeta resumen que muestra información clave de un contenedor (código, estado, origen y ETA). |
+| ContainerEditForm.js | Formulario cliente para la edición integral de los metadatos y configuración técnica de un contenedor. |
+| ContainerFilters.js | Panel de filtros que interactúa con la URL para segmentar contenedores por estado y depósito de origen. |
+| DeleteContainerButton.js | Botón de acción con confirmación nativa para la eliminación de un contenedor y sus registros asociados. |
+| RevertStatusButton.js | Botón de acción para retroceder el estado del flujo logístico de un contenedor específico. |
 
 ## Relaciones
-- **Usa**: `@/components/ui/StatusBadge` (UI genérica), `@/lib/constants` (constantes de almacenes, tipos de contenedor y estados), `@/app/contenedores/actions` (Server Actions para actualizar y revertir estados), `lucide-react` (iconos), y utilidades de enrutamiento de Next.js (`next/link`, `next/navigation`).
-- **Usado por**: Principalmente por las vistas y layouts dentro de `src/app/contenedores/`.
+- **Usa**: `next/link`, `next/navigation`, `lucide-react`, `@/components/ui/StatusBadge`, `@/lib/constants`, `@/app/contenedores/actions`.
+- **Usado por**: Principalmente por las páginas de listado (`src/app/contenedores/page.js`) y detalle (`src/app/contenedores/[id]/page.js`).
 
 ## Detalles clave
-- **Client Components**: La mayoría de los componentes (`ContainerEditForm`, `ContainerFilters`, `DeleteContainerButton`, `RevertStatusButton`) utilizan la directiva `'use client'` al depender de interactividad, hooks de React o manipulaciones de la URL.
-- **Manejo de estado en URL**: `ContainerFilters` utiliza los parámetros de búsqueda (Search Params) de la URL como fuente de verdad para los filtros, permitiendo compartir enlaces con los filtros aplicados.
-- **Prevención de errores**: Se utilizan alertas de confirmación nativas (`window.confirm`) para acciones destructivas o críticas, como la eliminación o reversión de estado de los contenedores.
-- **Gestión centralizada de dominio**: Las listas de almacenes, estados de contenedor y tipos de contenedor no están "hardcodeadas", sino que se importan de un archivo central de constantes (`@/lib/constants`).
+- **Sincronización de URL**: `ContainerFilters` utiliza los hooks de navegación de Next.js para persistir el estado del filtrado en la query string.
+- **Integración con Server Actions**: Los componentes de edición y acción (revertir/eliminar) consumen directamente las funciones del servidor para la mutación de datos.
+- **Feedback de Usuario**: Se implementan estados de carga local (`loading`) y confirmaciones nativas para acciones destructivas o cambios de estado críticos.
+- **Estandarización**: El renderizado de etiquetas y flags de países se centraliza mediante las constantes de `WAREHOUSES` y el componente `StatusBadge`.

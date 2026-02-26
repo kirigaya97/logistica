@@ -1,24 +1,20 @@
 # 📂 src/app/contenedores/[id]
 
 ## Propósito
-Gestiona la visualización detallada, edición y el control del ciclo de vida de un contenedor específico, centralizando la información de carga, clientes involucrados y el acceso a módulos de costos y packing list.
+Este directorio gestiona la vista de detalle, edición y control de flujo de un contenedor específico. Actúa como el centro de mando para supervisar los clientes a bordo, el estado logístico y el acceso a la documentación (packing list) y finanzas (costos).
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `page.js` | Componente de servidor que renderiza la ficha técnica del contenedor, maneja el modo edición mediante parámetros de URL y coordina las transiciones de estado. |
+| page.js | Componente de servidor principal que recupera la información del contenedor, calcula el resumen por cliente y coordina las acciones de gestión. |
 
 ## Relaciones
-- **Usa**: `@src/lib/supabase/server.js`, `@src/app/contenedores/actions.js`, `@src/lib/constants.js`, `@src/components/ui/StatusBadge.js`, `@src/components/contenedores/ContainerEditForm.js`, `@src/components/contenedores/DeleteContainerButton.js`, `@src/components/contenedores/RevertStatusButton.js`, `@src/components/ui/ExportButton.js`.
-- **Usado por**: Módulo principal de contenedores y sistema de navegación global.
+- **Usa**: `@src/lib/supabase/server.js`, `@src/app/contenedores/actions.js`, `@src/components/ui/StatusBadge.js`, `@src/components/ui/ExportButton.js`, `@src/components/contenedores/`, `@src/lib/constants.js`.
+- **Usado por**: El listado general de contenedores en `/src/app/contenedores/`.
 
 ## Detalles clave
-- **Máquina de Estados**: Implementa un flujo lineal de estados (`deposito` -> `transito` -> `aduana` -> `finalizado`) permitiendo avanzar o revertir etapas según el progreso logístico.
-- **Edición Dinámica**: Utiliza el parámetro de búsqueda `?edit=true` para alternar entre la vista de detalles y el formulario de edición sin recargar la página.
-- **Inteligencia de Carga**: Realiza una agregación en tiempo real de los "Clientes a bordo", calculando el volumen total ocupado (m³) y la cantidad de bultos por cada cliente asignado al contenedor.
-- **Exportación Full**: Integra una función de exportación que consolida en un solo archivo Excel los datos del contenedor, la lista de empaque completa y el desglose de ítems de costos.
-- **Navegación Contextual**: Actúa como panel de control central con accesos directos protegidos por contexto hacia las sub-rutas de costos y packing list.
-
-## Subdirectorios
-- `costos/`: Gestión detallada de ítems de costo y cálculos financieros del contenedor.
-- `packing-list/`: Importación, clasificación y visualización de la mercadería transportada.
+- **Ciclo de Vida**: Gestiona la transición entre estados logísticos (`deposito`, `transito`, `aduana`, `finalizado`) permitiendo avanzar o revertir según el progreso real.
+- **Interfaz Dual**: Alterna entre la visualización de datos y el formulario de edición (`ContainerEditForm`) basado en la presencia del query parameter `?edit=true`.
+- **Panel de Clientes**: Realiza una agregación dinámica de los ítems del Packing List para mostrar qué clientes tienen carga en el contenedor y cuánto volumen (`m3`) ocupan.
+- **Consolidación de Exportación**: Prepara un objeto de datos integral que incluye metadatos del contenedor, ítems y costos para su exportación a Excel.
+- **Navegación Contextual**: Provee accesos directos a los sub-módulos de `/costos` y `/packing-list` manteniendo la referencia del ID del contenedor actual.

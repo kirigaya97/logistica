@@ -1,24 +1,24 @@
 # 🧮 src/components/calculadora
 
 ## Propósito
-Este módulo contiene los componentes de la interfaz de usuario para realizar cálculos logísticos críticos, incluyendo la simulación de costos de importación, la gestión de plantillas de cálculo y la calculadora de cubicaje (volumétrica).
+Este módulo centraliza los componentes de interfaz para el motor de cálculos del sistema, permitiendo realizar simulaciones de costos de importación, gestionar plantillas de configuración y calcular el cubicaje volumétrico de contenedores.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `CostMatrix.js` | Componente central para la edición y visualización de la matriz de costos (FOB, CIF, tributos, impuestos y gastos operativos). |
-| `ExchangeRateSelector.js` | Interfaz para seleccionar entre distintos tipos de cambio (Oficial, Blue, MEP, CCL) o ingresar un valor manual. |
-| `Simulator.js` | Orquestador de simulaciones que permite cargar plantillas, realizar cálculos en tiempo real y gestionar el historial guardado. |
-| `TemplateManager.js` | Panel de administración para crear, editar y eliminar plantillas de configuración de la matriz de costos. |
-| `VolumetricCalc.js` | Calculadora de cubicaje que determina la cantidad óptima de cajas por contenedor basándose en volumen y peso. |
+| `CostMatrix.js` | Componente núcleo que visualiza y permite editar la matriz de costos (CIF, tributos, impuestos, gastos) de forma reactiva. |
+| `ExchangeRateSelector.js` | Selector de cotizaciones de divisas (Blue, Oficial, MEP, CCL) con soporte para sobrescritura manual del valor. |
+| `Simulator.js` | Interfaz principal de simulación que integra la matriz de costos con la persistencia de resultados y el historial de cálculos. |
+| `TemplateManager.js` | Gestor de configuraciones predefinidas que permite crear y modificar las bases de cálculo para distintos tipos de operación. |
+| `VolumetricCalc.js` | Herramienta de cálculo de cubicaje que determina la capacidad máxima de cajas por volumen y peso según el tipo de contenedor. |
 
 ## Relaciones
-- **Usa**: `src/lib/calculadora/engine.js` (lógica de costos), `src/lib/calculadora/volumetric.js` (lógica de cubicaje), `src/lib/calculadora/defaults.js` (configuración inicial), `src/hooks/useExchangeRate.js` (cotizaciones), `src/app/calculadora-costos/actions.js` (persistencia), `src/components/ui/ExportButton.js`.
-- **Usado por**: Páginas en `src/app/calculadora-costos/` (Simulador y Configuración) y `src/app/calculadora-volumetrica/`.
+- **Usa**: `@/lib/calculadora` (engine, volumetric, defaults), `@/hooks/useExchangeRate`, `@/app/calculadora-costos/actions`, `@/components/ui/ExportButton`, `@/lib/constants`.
+- **Usado por**: Páginas de la ruta `/calculadora-costos` (simulador y configuración) y `/calculadora-volumetrica`.
 
 ## Detalles clave
-- **Lógica Centralizada**: Los componentes visuales delegan la lógica matemática pesada a funciones puras en `src/lib/calculadora/` para garantizar consistencia.
-- **Interactividad**: Se utilizan componentes de cliente (`'use client'`) para ofrecer feedback inmediato ante cambios en inputs de FOB, dimensiones o porcentajes.
-- **Persistencia de Plantillas**: Permite definir estructuras de costos predeterminadas (por ejemplo, para distintos tipos de mercadería) que se guardan en la base de datos.
-- **Validación de Cubicaje**: La calculadora volumétrica detecta automáticamente si el peso total excede el máximo permitido del contenedor, marcando la configuración como inválida.
-- **Historial**: El simulador permite guardar "snapshots" de los resultados calculados para referencia futura o comparación de escenarios.
+- **Cálculos Reactivos**: Tanto la matriz de costos como el cubicaje se recalculan en tiempo real ante cualquier cambio en los inputs utilizando funciones puras del `lib/calculadora`.
+- **Persistencia**: Las simulaciones y plantillas se guardan en Supabase mediante Server Actions, incluyendo un "snapshot" de los resultados calculados para auditoría histórica.
+- **Categorización**: Los ítems de costo están agrupados jerárquicamente (CIF -> Tributos -> Base Imponible -> Impuestos -> Gastos) siguiendo la lógica aduanera argentina.
+- **Validación de Restricciones**: El calculador volumétrico identifica automáticamente si el limitante de carga es el volumen físico o el peso máximo permitido (TN).
+- **Modos de Operación**: `CostMatrix` soporta un modo `readOnly` para visualización de registros históricos sin permitir la edición de la estructura de costos.

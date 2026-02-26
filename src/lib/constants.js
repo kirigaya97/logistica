@@ -12,10 +12,11 @@ export const WAREHOUSES = {
 }
 
 export const CONTAINER_TYPES = {
-    '20': { label: "20'", lengthCm: 589, widthCm: 235, heightCm: 239, maxWeightKg: 28200 },
-    '40': { label: "40'", lengthCm: 1203, widthCm: 235, heightCm: 239, maxWeightKg: 28600 },
-    '40HC': { label: "40' HC", lengthCm: 1203, widthCm: 235, heightCm: 269, maxWeightKg: 28400 },
+    '40HC': { label: "40' HC", lengthCm: 1201, widthCm: 233, heightCm: 269 },
+    '40ST': { label: "40' Standard", lengthCm: 1201, widthCm: 233, heightCm: 269 },
 }
+
+export const WEIGHT_CAPACITIES_TN = [10, 12, 14, 16, 18, 20, 22, 24]
 
 export const NAV_GROUPS = [
     {

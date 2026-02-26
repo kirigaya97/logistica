@@ -1,21 +1,21 @@
-# 📁 src/app
+# 📂 src/app
 
 ## Propósito
-Punto de entrada principal y sistema de enrutamiento de la aplicación Next.js. Gestiona el layout global, la autenticación de nivel raíz y el panel de control (Dashboard) que centraliza las métricas clave de la operación logística.
+Punto de entrada principal de la aplicación utilizando Next.js App Router. Gestiona el armazón (shell) global del sistema, la verificación de autenticación raíz y la visualización del panel de control central.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| globals.css | Estilos globales del sistema, definición de variables de tema y configuración base de Tailwind CSS. |
-| layout.js | Layout raíz que implementa la verificación de sesión, estructura de navegación (Sidebar/Header) y el buscador global (Command Palette). |
-| page.js | Página principal (Dashboard) que muestra estadísticas de contenedores, clientes activos, volumen en tránsito y próximos arribos. |
+| globals.css | Definiciones de estilos globales, variables de CSS para el tema y configuración base de Tailwind. |
+| layout.js | Componente raíz que envuelve la aplicación; gestiona la sesión de usuario, el proveedor de menú móvil y la estructura de navegación persistente. |
+| page.js | Vista del Dashboard principal que consolida métricas de contenedores, volumen en tránsito, clientes activos y próximos arribos. |
 
 ## Relaciones
-- **Usa**: `@/lib/supabase/server` para gestión de datos y auth, `@/components/layout` para la estructura UI, y `@/lib/constants` para estados y almacenes.
-- **Usado por**: Next.js App Router como base del árbol de renderizado.
+- **Usa**: `@/lib/supabase/server` para gestión de sesión y datos, `@/components/layout` para la interfaz base, `@/lib/constants` para diccionarios de estados y almacenes, y `lucide-react` para iconografía.
+- **Usado por**: Framework Next.js como punto de montaje de la aplicación.
 
 ## Detalles clave
-- **Autenticación en Raíz**: El `RootLayout` es un componente de servidor que protege la interfaz; si no hay usuario, renderiza el contenido (usualmente el login) sin el marco de navegación.
-- **Métricas del Dashboard**: Realiza consultas directas a Supabase para contar registros y sumar el volumen (`volume_m3`) de los ítems en tránsito vinculando las tablas de contenedores y packing lists.
-- **Estructura Responsiva**: Implementa un `MobileMenuProvider` (Context API) para coordinar la apertura y cierre del menú lateral entre el `Header` y la `Sidebar` en dispositivos móviles.
-- **UX**: Integra el `CommandPalette` a nivel global, permitiendo acceso rápido mediante teclado a contenedores, clientes y herramientas.
+- **Control de Acceso**: El `layout.js` actúa como guardián; si no hay un usuario autenticado, no renderiza los componentes de navegación (Sidebar/Header), permitiendo que las páginas de login operen fuera del shell principal.
+- **Métricas en Tiempo Real**: El dashboard (`page.js`) realiza consultas agregadas directamente a Supabase para calcular el volumen total (m³) basado en los ítems de los packing lists en tránsito.
+- **Navegación Global**: Integra un `CommandPalette` accesible mediante atajos de teclado (Ctrl+K) para búsqueda rápida de entidades en todo el sistema.
+- **Diseño Adaptable**: Utiliza un `MobileMenuProvider` para coordinar la apertura y cierre del menú lateral en dispositivos móviles desde distintos componentes del header.

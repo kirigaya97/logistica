@@ -7,7 +7,8 @@ import { z } from 'zod'
 
 const containerSchema = z.object({
     origin_warehouse: z.enum(['HK', 'CH', 'USA']),
-    container_type: z.enum(['20', '40', '40HC']),
+    container_type: z.enum(['40HC', '40ST']),
+    weight_capacity_tons: z.coerce.number().refine(val => [10, 12, 14, 16, 18, 20, 22, 24].includes(val)),
     description: z.string().optional(),
     eta: z.string().optional(),
     etd: z.string().optional(),

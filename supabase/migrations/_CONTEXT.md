@@ -1,27 +1,28 @@
-# 📂 supabase/migrations
+# 📁 supabase/migrations
 
 ## Propósito
-Este directorio contiene la evolución del esquema de la base de datos en Supabase, definiendo la estructura de tablas, relaciones, políticas de seguridad (RLS), funciones y triggers necesarios para la operación del sistema de logística.
+Este directorio contiene los scripts SQL de migración que definen el esquema de la base de datos en Supabase, incluyendo tablas, relaciones, políticas de seguridad (RLS) y lógica de servidor mediante triggers y funciones.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| 001_profiles.sql | Define la tabla de perfiles de usuario extendiendo auth.users y automatiza su creación mediante triggers. |
-| 002_containers.sql | Estructura principal para la gestión de contenedores, estados logísticos y metadatos de transporte. |
-| 003_exchange_rates.sql | Registro histórico de diversos tipos de cambio (oficial, blue, bolsa, CCL). |
-| 004_cost_calculations.sql | Define el motor de persistencia para cálculos de costos e ítems individuales con lógica de overrides. |
-| 005_packing_lists.sql | Gestiona la relación entre contenedores y sus listas de empaque, incluyendo el detalle de bultos. |
-| 006_clients_tags.sql | Administración de clientes, historial de tarifas personalizadas y sistema de etiquetas para ítems. |
-| 007_cost_template.sql | Implementa plantillas configurables de costos y simulaciones basadas en objetos JSONB. |
-| 008_multi_templates.sql | Expande el sistema de plantillas para soportar múltiples versiones (Base, Real, Cliente) y snapshots. |
+| 001_profiles.sql | Gestión de perfiles de usuario vinculados a la autenticación de Supabase y triggers de creación automática. |
+| 002_containers.sql | Definición de la entidad principal de contenedores, estados logísticos y seguimiento de fechas (ETA/ETD). |
+| 003_exchange_rates.sql | Registro histórico y actual de tipos de cambio (Blue, Oficial, Bolsa, CCL). |
+| 004_cost_calculations.sql | Estructura para cálculos de costos por contenedor, permitiendo ítems fijos o porcentuales. |
+| 005_packing_lists.sql | Gestión del manifiesto de carga (Packing List) y detalle de ítems individuales con pesos y volúmenes. |
+| 006_clients_tags.sql | Definición de clientes, historial de tarifas y sistema de etiquetado para clasificación de carga. |
+| 007_cost_template.sql | Configuración de plantillas de costos predeterminadas y almacenamiento de simulaciones. |
+| 008_multi_templates.sql | Soporte para múltiples variantes de plantillas (Salida Real, Salida Cliente) y snapshots de resultados. |
+| 009_update_container_types_weight.sql | Actualización de tipos de contenedores (40HC/40ST) y restricciones de capacidad de carga en toneladas. |
 
 ## Relaciones
-- **Usa**: Supabase Auth (para la vinculación de perfiles de usuario).
-- **Usado por**: `src/lib/supabase/` para la interacción con datos y Server Actions en los módulos de contenedores, clientes y calculadora.
+- **Usa**: Supabase Auth (para gestión de perfiles) y extensiones nativas de PostgreSQL como `pgcrypto`.
+- **Usado por**: `src/lib/supabase/` para la instanciación del cliente y las Server Actions que ejecutan operaciones CRUD sobre estas entidades.
 
 ## Detalles clave
-- **Seguridad RLS**: Todas las tablas implementan Row Level Security (RLS) con políticas de acceso para usuarios autenticados.
-- **Automatización**: Se utilizan triggers de PostgreSQL para mantener actualizados los campos `updated_at` y sincronizar perfiles de usuario.
-- **Flexibilidad**: La configuración de costos utiliza `JSONB` en las plantillas para permitir cambios en la estructura de cálculo sin migraciones de esquema frecuentes.
-- **Integridad**: Relaciones con `ON DELETE CASCADE` en entidades dependientes (como ítems de packing list o cálculos de costo) para garantizar la limpieza de datos.
-- **Historial**: Tablas específicas para el seguimiento de cambios en tarifas de clientes y tipos de cambio de divisas.
+- **Seguridad**: Todas las tablas tienen habilitado Row Level Security (RLS) para restringir el acceso solo a usuarios autenticados.
+- **Automatización**: Se utilizan Triggers para la actualización automática de campos `updated_at` y la creación de perfiles tras el registro de usuario.
+- **Flexibilidad de Costos**: El sistema de cálculo permite definir ítems basados en montos fijos o porcentajes calculados sobre diferentes bases (FOB, CIF, etc.).
+- **Integridad**: Existen restricciones (CHECK constraints) estrictas para estados de contenedor, tipos de cambio y capacidades de peso permitidas.
+- **Relaciones**: Implementa una arquitectura relacional sólida con borrado en cascada para mantener la integridad entre contenedores, cálculos y listas de empaque.
