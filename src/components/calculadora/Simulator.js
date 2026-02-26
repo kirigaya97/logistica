@@ -14,7 +14,7 @@ export default function Simulator({ defaultItems, initialSimulations, templates 
     const [name, setName] = useState('')
     const [saving, setSaving] = useState(false)
 
-    async function handleSave({ fobTotal, items, result }) {
+    async function handleSave({ fobTotal, items, result, exchangeRate }) {
         const simName = name || `Simulación ${new Date().toLocaleDateString()}`
         setSaving(true)
         try {
@@ -28,7 +28,10 @@ export default function Simulator({ defaultItems, initialSimulations, templates 
                 totalGastosOp: result.totalGastosOp,
                 totalGastosExt: result.totalGastosExt,
                 costoTotal: result.costoTotal,
-                items: result.items
+                items: result.items,
+                exchangeRateType: exchangeRate?.type || null,
+                exchangeRateValue: exchangeRate?.rate || null,
+                costoTotalARS: exchangeRate ? Math.round(result.costoTotal * exchangeRate.rate) : null,
             }
 
             const newSim = await saveSimulation(simName, fobTotal, items, snapshot)

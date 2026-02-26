@@ -1,24 +1,24 @@
 # 🧮 src/components/calculadora
 
 ## Propósito
-Este módulo centraliza los componentes de interfaz para el motor de cálculos del sistema, permitiendo realizar simulaciones de costos de importación, gestionar plantillas de configuración y calcular el cubicaje volumétrico de contenedores.
+Este módulo contiene los componentes de interfaz de usuario necesarios para realizar cálculos logísticos críticos, incluyendo la simulación de costos de importación y el cálculo de cubicaje (optimización de carga) para contenedores.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `CostMatrix.js` | Componente núcleo que visualiza y permite editar la matriz de costos (CIF, tributos, impuestos, gastos) de forma reactiva. |
-| `ExchangeRateSelector.js` | Selector de cotizaciones de divisas (Blue, Oficial, MEP, CCL) con soporte para sobrescritura manual del valor. |
-| `Simulator.js` | Interfaz principal de simulación que integra la matriz de costos con la persistencia de resultados y el historial de cálculos. |
-| `TemplateManager.js` | Gestor de configuraciones predefinidas que permite crear y modificar las bases de cálculo para distintos tipos de operación. |
-| `VolumetricCalc.js` | Herramienta de cálculo de cubicaje que determina la capacidad máxima de cajas por volumen y peso según el tipo de contenedor. |
+| `CostMatrix.js` | Grilla interactiva para la edición y visualización de la estructura de costos (FOB, CIF, tributos, impuestos y gastos). |
+| `ExchangeRateSelector.js` | Componente de selección de divisas que permite utilizar cotizaciones en tiempo real o valores personalizados para proyecciones en ARS. |
+| `Simulator.js` | Orquestador de simulaciones que permite nombrar, guardar, listar y exportar diferentes escenarios de costos de importación. |
+| `TemplateManager.js` | Interfaz para la administración de plantillas de costos, permitiendo definir configuraciones base o alternativas para la calculadora. |
+| `VolumetricCalc.js` | Herramienta de cálculo de cubicaje que determina la capacidad máxima de bultos en un contenedor basándose en volumen y peso. |
 
 ## Relaciones
-- **Usa**: `@/lib/calculadora` (engine, volumetric, defaults), `@/hooks/useExchangeRate`, `@/app/calculadora-costos/actions`, `@/components/ui/ExportButton`, `@/lib/constants`.
-- **Usado por**: Páginas de la ruta `/calculadora-costos` (simulador y configuración) y `/calculadora-volumetrica`.
+- **Usa**: `lib/calculadora/engine` (motor de cálculo), `lib/calculadora/volumetric` (lógica de cubicaje), `lib/calculadora/defaults` (estructuras base), `hooks/useExchangeRate` (datos de divisas), `app/calculadora-costos/actions` (persistencia) y `components/ui/ExportButton`.
+- **Usado por**: Las páginas principales de `/calculadora-costos`, `/calculadora-volumetrica` y las vistas de gestión de costos dentro de los detalles de contenedores.
 
 ## Detalles clave
-- **Cálculos Reactivos**: Tanto la matriz de costos como el cubicaje se recalculan en tiempo real ante cualquier cambio en los inputs utilizando funciones puras del `lib/calculadora`.
-- **Persistencia**: Las simulaciones y plantillas se guardan en Supabase mediante Server Actions, incluyendo un "snapshot" de los resultados calculados para auditoría histórica.
-- **Categorización**: Los ítems de costo están agrupados jerárquicamente (CIF -> Tributos -> Base Imponible -> Impuestos -> Gastos) siguiendo la lógica aduanera argentina.
-- **Validación de Restricciones**: El calculador volumétrico identifica automáticamente si el limitante de carga es el volumen físico o el peso máximo permitido (TN).
-- **Modos de Operación**: `CostMatrix` soporta un modo `readOnly` para visualización de registros históricos sin permitir la edición de la estructura de costos.
+- **Lógica Descentralizada**: Los componentes actúan como controladores de vista, delegando los cálculos matemáticos pesados a funciones puras en `lib/calculadora`.
+- **Persistencia**: Utiliza *Server Actions* para guardar simulaciones y configuraciones de plantillas directamente en Supabase.
+- **Doble Restricción en Cubicaje**: El calculador volumétrico no solo considera las dimensiones físicas (largo, ancho, alto) sino también la capacidad de carga en toneladas del contenedor.
+- **Interactividad**: Los componentes manejan estados de "sucio" (`isDirty`) y carga (`saving`) para mejorar la experiencia de usuario durante la edición de matrices complejas.
+- **Proyecciones en ARS**: La integración con el selector de tasa de cambio permite visualizar el "Costo Total Proyectado" en moneda local de forma dinámica.

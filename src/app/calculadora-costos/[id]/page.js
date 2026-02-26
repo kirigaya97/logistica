@@ -106,6 +106,24 @@ export default async function SimulationDetailPage({ params }) {
                                 <label className="block text-[10px] uppercase font-bold text-gray-400 mb-1">Gastos Externos</label>
                                 <p className="text-sm font-medium text-gray-700">${snapshot.totalGastosExt?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</p>
                             </div>
+
+                            {snapshot.exchangeRateValue && (
+                                <div className="pt-4 border-t border-gray-100">
+                                    <div className="mb-3">
+                                        <label className="block text-[10px] uppercase font-bold text-gray-400 mb-1">Tipo de Cambio</label>
+                                        <p className="text-sm font-bold text-gray-700 capitalize">
+                                            {snapshot.exchangeRateType === 'custom' ? 'Personalizado' : snapshot.exchangeRateType}
+                                            <span className="font-normal text-gray-500 ml-1">— $ {snapshot.exchangeRateValue.toLocaleString('es-AR')} / USD</span>
+                                        </p>
+                                    </div>
+                                    <div className="bg-green-50 p-3 rounded-lg border border-green-100">
+                                        <label className="block text-[10px] uppercase font-bold text-green-600 mb-1">Total Proyectado (ARS)</label>
+                                        <p className="text-lg font-black text-green-700">
+                                            $ {snapshot.costoTotalARS?.toLocaleString('es-AR') || (snapshot.costoTotal * snapshot.exchangeRateValue).toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 

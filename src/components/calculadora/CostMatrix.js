@@ -3,10 +3,12 @@
 import { useState, useCallback } from 'react'
 import { calculateCosts } from '@/lib/calculadora/engine'
 import { CATEGORY_LABELS } from '@/lib/calculadora/defaults'
-import { DollarSign, Eye, EyeOff, Save, Loader2 } from 'lucide-react'
+import { DollarSign, Eye, EyeOff, Save, Loader2, Info } from 'lucide-react'
+import ExchangeRateSelector from './ExchangeRateSelector'
 
 export default function CostMatrix({ calculation, onSave, readOnly = false }) {
     const [fob, setFob] = useState(calculation?.fob_total || 0)
+    const [selectedRate, setSelectedRate] = useState(null)
     const [items, setItems] = useState(
         (calculation?.cost_items || [])
             .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
@@ -33,7 +35,7 @@ export default function CostMatrix({ calculation, onSave, readOnly = false }) {
         if (!onSave || readOnly) return
         setSaving(true)
         try {
-            await onSave({ fobTotal: fob, items, result })
+            await onSave({ fobTotal: fob, items, result, exchangeRate: selectedRate })
             setIsDirty(false)
         } catch (e) {
             alert(e.message)
@@ -50,6 +52,11 @@ export default function CostMatrix({ calculation, onSave, readOnly = false }) {
 
     return (
         <div className="space-y-6 relative">
+            {/* Exchange Rate Selector */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <ExchangeRateSelector value={selectedRate} onChange={setSelectedRate} />
+            </div>
+
             {/* FOB Input */}
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -141,6 +148,29 @@ export default function CostMatrix({ calculation, onSave, readOnly = false }) {
                     <hr />
                     <div className="flex justify-between text-lg font-bold"><span>COSTO TOTAL</span><span className="text-blue-700">${result.costoTotal.toLocaleString('es-AR', { minimumFractionDigits: 2 })}</span></div>
                 </div>
+
+                {selectedRate && (
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                        <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <p className="text-[10px] uppercase font-bold text-green-600 mb-1">Costo Total Proyectado (ARS)</p>
+                                    <p className="text-2xl font-black text-green-700">
+                                        $ {(result.costoTotal * selectedRate.rate).toLocaleString('es-AR', { maximumFractionDigits: 0 })}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-green-600 font-medium">
+                                        Tasa: {selectedRate.type === 'custom' ? 'Personalizada' : selectedRate.type.toUpperCase()}
+                                    </p>
+                                    <p className="text-xs text-green-700 font-bold">
+                                        $ {selectedRate.rate.toLocaleString('es-AR')} / USD
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Save Button Floating */}

@@ -1,18 +1,18 @@
-# 📦 src
+# 📂 src
 
 ## Propósito
-Contiene el código fuente principal de la aplicación, centralizando la lógica de ruteo, componentes de interfaz, hooks personalizados y utilidades de integración con servicios externos.
+Directorio raíz del código fuente de la aplicación. Centraliza la lógica de negocio, la estructura de navegación, los componentes de la interfaz de usuario y las integraciones con servicios externos.
 
 ## Archivos
 | Archivo | Descripción |
 |---|---|
-| `middleware.js` | Gestiona la autenticación y protección de rutas mediante Supabase, controlando el flujo de acceso entre la aplicación y la página de login. |
+| middleware.js | Gestiona la seguridad de las rutas y la persistencia de la sesión de usuario mediante Supabase SSR. |
 
 ## Relaciones
 - **Usa**: `@supabase/ssr`, `next/server`.
-- **Usado por**: Next.js (ejecución nativa a nivel de ruteo para interceptar solicitudes).
+- **Usado por**: El framework Next.js para interceptar peticiones y validar el estado de autenticación antes de renderizar páginas.
 
 ## Detalles clave
-- **Guardia de Seguridad**: Implementa una lógica de redirección automática que asegura que solo usuarios autenticados accedan a la aplicación, exceptuando la ruta de `/login`.
-- **Sincronización de Sesión**: Utiliza `createServerClient` para manejar y sincronizar cookies de autenticación entre el servidor y el cliente de forma transparente.
-- **Configuración de Matcher**: Está optimizado para ignorar archivos estáticos (`_next`, imágenes, favicons) y rutas de API, evitando ejecuciones innecesarias del middleware.
+- **Autenticación Obligatoria**: Implementa una política de "privado por defecto", redirigiendo a `/login` cualquier intento de acceso no autenticado a rutas del sistema.
+- **Gestión de Sesión**: Utiliza `createServerClient` para el manejo dinámico de cookies, permitiendo que la sesión se mantenga actualizada tanto en el cliente como en el servidor.
+- **Exclusiones del Middleware**: El matcher está configurado para ignorar archivos estáticos (imágenes, favicons) y rutas de API, optimizando el rendimiento.
